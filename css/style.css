@@ -1,0 +1,55 @@
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-primary: #f4f4f9;
+        --bg-secondary: #fff;
+        --text-primary: #333;
+        --link-color: #007acc;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2a2a2a;
+        --text-primary: #ffffff;
+        --link-color: #00ff9d;
+    }
+}
+
+.nakedcircuits {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2em;
+}
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-primary);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: var(--text-primary);
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--bg-secondary);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    margin-top: 0;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
