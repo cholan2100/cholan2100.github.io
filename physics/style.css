@@ -6,8 +6,6 @@ body {
 }
 
 header {
-    background-color: #333;
-    color: white;
     text-align: center;
     padding: 1rem;
 }
@@ -40,7 +38,5 @@ img {
 footer {
     text-align: center;
     padding: 1rem;
-    background: #333;
-    color: white;
     margin-top: 20px;
 }
