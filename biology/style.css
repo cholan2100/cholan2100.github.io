@@ -67,4 +67,6 @@ footer {
     white-space: pre-wrap;
     overflow-x: auto;
     border-radius: 5px;
+    font-size: 1.2em;
+    text-align: center;
 }
