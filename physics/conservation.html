@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conservation of Energy: The Swinging Pendulum</title>
+    <style>
+        :root {
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --highlight-bg: #f0f0f0;
+            --canvas-border: #000000;
+            --heading-color: #333333;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #1a1a1a;
+                --text-color: #e0e0e0;
+                --highlight-bg: #333333;
+                --canvas-border: #ffffff;
+                --heading-color: #e0e0e0;
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        canvas {
+            border: 1px solid var(--canvas-border);
+            margin: 10px 0;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #controls {
+            margin-top: 10px;
+        }
+
+        h1, h2 {
+            color: var(--heading-color);
+        }
+
+        p {
+            margin: 15px 0;
+        }
+
+        .highlight {
+            background-color: var(--highlight-bg);
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        #controls label, #controls span {
+            color: var(--text-color);
+        }
+
+        #friction {
+            accent-color: var(--heading-color);
+        }
+
+        .note {
+            font-style: italic;
+            font-size: 0.9em;
+            color: var(--text-color);
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Conservation of Energy: The Swinging Pendulum</h1>
+    
+    <section>
+        <h2>Introduction to Energy Conservation</h2>
+        <p>
+            Energy is a fundamental concept in physics, and the law of conservation of energy states that the total energy in an isolated system remains constant—it can neither be created nor destroyed, only transformed from one form to another. In this interactive article, we'll explore how energy changes form in a swinging pendulum and how friction causes some of that energy to be lost as heat.
+        </p>
+    </section>
+
+    <section>
+        <h2>The Pendulum Simulation</h2>
+        <p>
+            Below is a simulation of a swinging pendulum. The top canvas shows the swing in motion with labels for Potential Energy (PE) and Kinetic Energy (KE). The bottom canvas graphs the swing's position over time as a wave. Use the friction slider to see how energy dissipation affects the swing's behavior.
+        </p>
+        <div id="container">
+            <canvas id="swingCanvas" width="400" height="300"></canvas>
+            <canvas id="waveCanvas" width="400" height="300"></canvas>
+            <div id="controls">
+                <label for="friction">Friction (0-0.02): </label>
+                <input type="range" id="friction" min="0" max="0.02" step="0.001" value="0.005">
+                <span id="frictionValue">0.005</span>
+            </div>
+            <p class="note">
+                Note: Setting the friction slider to 0 will simulate an idealized system where the pendulum swings forever without losing energy.
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Energy Transformations in the Swing</h2>
+        <p>
+            In a pendulum, energy constantly transforms between two main forms:
+        </p>
+        <ul>
+            <li><strong>Potential Energy (PE):</strong> When the swing is at its highest point (maximum angle), it has maximum potential energy due to its height above the lowest point. This energy is stored and ready to be converted.</li>
+            <li><strong>Kinetic Energy (KE):</strong> As the swing moves toward the bottom of its arc, potential energy converts into kinetic energy—the energy of motion. At the lowest point, kinetic energy is at its maximum, and potential energy is at its minimum.</li>
+        </ul>
+        <p>
+            In an ideal, frictionless system, the total energy (PE + KE) would remain constant, and the swing would oscillate forever. Watch the simulation with friction set to 0 to see this idealized behavior—the wave maintains its amplitude indefinitely.
+        </p>
+    </section>
+
+    <section>
+        <h2>Friction and Energy Loss</h2>
+        <p>
+            In reality, no system is perfectly frictionless. Friction—whether from air resistance or at the pivot point—causes the swing to slow down over time. This energy isn't destroyed; it’s transformed into <span class="highlight">heat</span>, a form of thermal energy.
+        </p>
+        <p>
+            Increase the friction slider in the simulation. Notice how the swing's amplitude decreases more quickly and the wave in the graph dampens. The higher the friction, the faster the swing loses its mechanical energy (PE + KE), converting it into thermal energy that dissipates into the surroundings.
+        </p>
+    </section>
+
+    <section>
+        <h2>Conservation in Action</h2>
+        <p>
+            The total energy in the system starts as the initial potential energy when the swing is released. As it moves:
+        </p>
+        <ul>
+            <li>PE → KE as it swings down</li>
+            <li>KE → PE as it swings up</li>
+            <li>Some PE + KE → Heat due to friction</li>
+        </ul>
+        <p>
+            While the mechanical energy decreases due to friction, the total energy in the universe is conserved when we account for the heat produced. This demonstrates the broader principle of energy conservation: energy changes form, but the total amount remains constant.
+        </p>
+    </section>
+
+    <section>
+        <h2>Conclusion</h2>
+        <p>
+            The swinging pendulum is a perfect example of energy conservation and transformation. Through this simulation, we see how potential and kinetic energy trade places and how friction introduces energy loss as heat. Play with the friction slider to explore these concepts further and observe the balance between motion and energy dissipation in action!
+        </p>
+    </section>
+
+    <script>
+        const swingCanvas = document.getElementById('swingCanvas');
+        const swingCtx = swingCanvas.getContext('2d');
+        const waveCanvas = document.getElementById('waveCanvas');
+        const waveCtx = waveCanvas.getContext('2d');
+
+        const length = 200;
+        const gravity = 3150;
+        const originX = swingCanvas.width / 2;
+        const originY = 50;
+        
+        let angle = Math.PI / 4;
+        let angularVelocity = 0;
+        let time = 0;
+        const dt = 0.02;
+        
+        const waveData = [];
+        const maxPoints = 400;
+        
+        const frictionSlider = document.getElementById('friction');
+        const frictionValueDisplay = document.getElementById('frictionValue');
+        let friction = parseFloat(frictionSlider.value);
+
+        frictionSlider.addEventListener('input', () => {
+            friction = parseFloat(frictionSlider.value);
+            frictionValueDisplay.textContent = friction.toFixed(3);
+        });
+
+        function simulateSwing() {
+            const angularAcceleration = (-gravity / length) * Math.sin(angle);
+            angularVelocity += angularAcceleration * dt;
+            angle += angularVelocity * dt;
+            
+            // Apply friction
+            angularVelocity *= (1 - friction);
+            
+            const amplitude = length * Math.sin(angle);
+            waveData.push(amplitude);
+            if (waveData.length > maxPoints) waveData.shift();
+            
+            time += dt;
+        }
+
+        function drawSwing() {
+            swingCtx.clearRect(0, 0, swingCanvas.width, swingCanvas.height);
+
+            // Draw support beam
+            swingCtx.beginPath();
+            swingCtx.moveTo(0, originY);
+            swingCtx.lineTo(swingCanvas.width, originY);
+            swingCtx.strokeStyle = 'brown';
+            swingCtx.lineWidth = 5;
+            swingCtx.stroke();
+            
+            const swingX = originX + length * Math.sin(angle);
+            const swingY = originY + length * Math.cos(angle);
+            
+            // Draw rope
+            swingCtx.beginPath();
+            swingCtx.moveTo(originX, originY);
+            swingCtx.lineTo(swingX, swingY);
+            swingCtx.strokeStyle = 'gray';
+            swingCtx.lineWidth = 2;
+            swingCtx.stroke();
+            
+            // Draw swing seat
+            swingCtx.beginPath();
+            swingCtx.rect(swingX - 20, swingY, 40, 10);
+            swingCtx.fillStyle = 'red';
+            swingCtx.fill();
+
+            // Calculate energy proportions
+            const height = length * (1 - Math.cos(angle));
+            const maxHeight = length * (1 - Math.cos(Math.PI / 4));
+            const peFactor = height / maxHeight;
+            const keFactor = 1 - peFactor;
+
+            // Draw Potential Energy (PE) vector
+            swingCtx.beginPath();
+            swingCtx.moveTo(swingX, swingY);
+            swingCtx.lineTo(swingX, swingY - 50 * peFactor);
+            swingCtx.strokeStyle = 'green';
+            swingCtx.lineWidth = 2;
+            swingCtx.stroke();
+            swingCtx.fillStyle = 'green';
+            swingCtx.fillText('PE', swingX + 5, swingY - 50 * peFactor - 5);
+
+            // Draw Kinetic Energy (KE) vector
+            const keVectorLength = 50 * keFactor;
+            swingCtx.beginPath();
+            swingCtx.moveTo(swingX, swingY);
+            swingCtx.lineTo(swingX + (angle > 0 ? -keVectorLength : keVectorLength), swingY);
+            swingCtx.strokeStyle = 'purple';
+            swingCtx.lineWidth = 2;
+            swingCtx.stroke();
+            swingCtx.fillStyle = 'purple';
+            swingCtx.fillText('KE', swingX + (angle > 0 ? -keVectorLength - 25 : keVectorLength + 5), swingY - 5);
+
+            // Draw Frictional Heat Loss at pivot
+            swingCtx.fillStyle = 'red';
+            swingCtx.font = '12px Arial';
+            swingCtx.fillText('Heat', originX + 10, originY - 10);
+            swingCtx.beginPath();
+            swingCtx.arc(originX, originY, 5, 0, Math.PI * 2);
+            swingCtx.fill();
+        }
+
+        function drawWave() {
+            waveCtx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
+            waveCtx.beginPath();
+            waveCtx.moveTo(0, waveCanvas.height / 2);
+            waveCtx.lineTo(waveCanvas.width, waveCanvas.height / 2);
+            waveCtx.strokeStyle = 'gray';
+            waveCtx.lineWidth = 1;
+            waveCtx.stroke();
+            
+            waveCtx.beginPath();
+            for (let i = 0; i < waveData.length; i++) {
+                const x = i;
+                const y = waveCanvas.height / 2 - waveData[i];
+                if (i === 0) waveCtx.moveTo(x, y);
+                else waveCtx.lineTo(x, y);
+            }
+            waveCtx.strokeStyle = 'blue';
+            waveCtx.lineWidth = 2;
+            waveCtx.stroke();
+        }
+
+        function animate() {
+            simulateSwing();
+            drawSwing();
+            drawWave();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
