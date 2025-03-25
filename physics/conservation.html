@@ -11,6 +11,9 @@
             --highlight-bg: #f0f0f0;
             --canvas-border: #000000;
             --heading-color: #333333;
+            --button-bg: #4CAF50;
+            --button-text: #ffffff;
+            --seat-color: #000000; /* Black for light mode */
         }
 
         @media (prefers-color-scheme: dark) {
@@ -20,6 +23,9 @@
                 --highlight-bg: #333333;
                 --canvas-border: #ffffff;
                 --heading-color: #e0e0e0;
+                --button-bg: #45a049;
+                --button-text: #e0e0e0;
+                --seat-color: #ffffff; /* White for dark mode */
             }
         }
 
@@ -42,6 +48,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 20px;
+        }
+
+        #simulationContainer {
+            display: flex;
+            align-items: flex-start;
             gap: 20px;
         }
 
@@ -78,6 +90,27 @@
             text-align: center;
             margin-top: 10px;
         }
+
+        #restartButton {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #restartButton:hover {
+            background-color: #45a049;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            #restartButton:hover {
+                background-color: #3d8b40;
+            }
+        }
     </style>
 </head>
 <body>
@@ -93,10 +126,13 @@
     <section>
         <h2>The Pendulum Simulation</h2>
         <p>
-            Below is a simulation of a swinging pendulum. The top canvas shows the swing in motion with labels for Potential Energy (PE) and Kinetic Energy (KE). The bottom canvas graphs the swing's position over time as a wave. Use the friction slider to see how energy dissipation affects the swing's behavior.
+            Below is a simulation of a swinging pendulum. The top canvas shows the swing in motion with labels for Potential Energy (PE) and Kinetic Energy (KE). The bottom canvas graphs the swing's position over time as a wave. Use the friction slider to see how energy dissipation affects the swing's behavior, and the restart button to reset the simulation.
         </p>
         <div id="container">
-            <canvas id="swingCanvas" width="400" height="300"></canvas>
+            <div id="simulationContainer">
+                <canvas id="swingCanvas" width="400" height="300"></canvas>
+                <button id="restartButton">Restart</button>
+            </div>
             <canvas id="waveCanvas" width="400" height="300"></canvas>
             <div id="controls">
                 <label for="friction">Friction (0-0.02): </label>
@@ -151,7 +187,7 @@
     <section>
         <h2>Conclusion</h2>
         <p>
-            The swinging pendulum is a perfect example of energy conservation and transformation. Through this simulation, we see how potential and kinetic energy trade places and how friction introduces energy loss as heat. Play with the friction slider to explore these concepts further and observe the balance between motion and energy dissipation in action!
+            The swinging pendulum is a perfect example of energy conservation and transformation. Through this simulation, we see how potential and kinetic energy trade places and how friction introduces energy loss as heat. Play with the friction slider and restart button to explore these concepts further and observe the balance between motion and energy dissipation in action!
         </p>
     </section>
 
@@ -160,6 +196,7 @@
         const swingCtx = swingCanvas.getContext('2d');
         const waveCanvas = document.getElementById('waveCanvas');
         const waveCtx = waveCanvas.getContext('2d');
+        const restartButton = document.getElementById('restartButton');
 
         const length = 200;
         const gravity = 3150;
@@ -171,7 +208,7 @@
         let time = 0;
         const dt = 0.02;
         
-        const waveData = [];
+        let waveData = [];
         const maxPoints = 400;
         
         const frictionSlider = document.getElementById('friction');
@@ -183,12 +220,18 @@
             frictionValueDisplay.textContent = friction.toFixed(3);
         });
 
+        restartButton.addEventListener('click', () => {
+            angle = Math.PI / 4; // Initial angle (45 degrees)
+            angularVelocity = 0;
+            time = 0;
+            waveData = []; // Clear wave data
+        });
+
         function simulateSwing() {
             const angularAcceleration = (-gravity / length) * Math.sin(angle);
             angularVelocity += angularAcceleration * dt;
             angle += angularVelocity * dt;
             
-            // Apply friction
             angularVelocity *= (1 - friction);
             
             const amplitude = length * Math.sin(angle);
@@ -220,10 +263,10 @@
             swingCtx.lineWidth = 2;
             swingCtx.stroke();
             
-            // Draw swing seat
+            // Draw swing seat with theme-based color
             swingCtx.beginPath();
             swingCtx.rect(swingX - 20, swingY, 40, 10);
-            swingCtx.fillStyle = 'red';
+            swingCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--seat-color').trim();
             swingCtx.fill();
 
             // Calculate energy proportions
