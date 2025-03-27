@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> {/* Class for theme will be added here by JS */}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,10 +28,11 @@
             --canvas-border: #555;
             --path-color: rgba(255, 255, 255, 0.5); /* White path for black space */
             --label-color: #555;
+            --blockquote-border: #ccc;
+            --blockquote-bg: #f9f9f9;
         }
 
         /* --- Dark Mode Overrides --- */
-        /* Use class selector for JS control */
         html.dark-mode {
             --bg-color: #121212;
             --text-color: #e0e0e0;
@@ -54,6 +55,8 @@
             --canvas-border: #333;
             --path-color: rgba(200, 200, 255, 0.6); /* Lighter, slightly blue path */
             --label-color: #bbb;
+            --blockquote-border: #555;
+            --blockquote-bg: #2c2c2c;
         }
 
         /* --- Base Styles using Variables --- */
@@ -85,12 +88,17 @@
             text-align: center;
             border-bottom: 2px solid var(--header-border);
             padding-bottom: 10px;
+            margin-bottom: 25px;
         }
 
         h2 {
             margin-top: 30px;
             border-bottom: 1px solid var(--secondary-header-border);
             padding-bottom: 5px;
+        }
+
+        h3 {
+             margin-top: 20px;
         }
 
         p {
@@ -100,6 +108,15 @@
         ul {
             list-style: disc;
             margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
         }
 
         strong {
@@ -121,6 +138,15 @@
             padding: 2px 4px;
             border-radius: 3px;
             font-family: monospace;
+        }
+
+        blockquote { /* Styling for Kepler's laws */
+            margin-left: 20px;
+            padding: 10px 15px;
+            border-left: 5px solid var(--blockquote-border);
+            background-color: var(--blockquote-bg);
+            font-style: italic;
+            margin-bottom: 15px;
         }
 
         /* --- Simulation Specific Styles --- */
@@ -213,28 +239,16 @@
         // Run this early to set the theme class before rendering starts
         (function() {
             const Elem = document.documentElement; // Get the <html> element
-            // Basic check for system preference. Doesn't include manual override yet.
-            // More robust solutions would use localStorage to remember a user's choice.
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 Elem.classList.add('dark-mode');
             } else {
-                Elem.classList.add('light-mode'); // Explicitly add light-mode class as well
+                Elem.classList.add('light-mode');
             }
-
-            // Optional: Listen for changes in system preference
              window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-                 if (event.matches) {
-                     Elem.classList.add('dark-mode');
-                     Elem.classList.remove('light-mode');
-                 } else {
-                     Elem.classList.add('light-mode');
-                     Elem.classList.remove('dark-mode');
-                 }
-                 // Re-run simulation draw if needed to update path color immediately
-                 // (Requires simulation script to expose a draw function globally or handle this internally)
-                 // if (typeof window.redrawSimulation === 'function') {
-                 //    window.redrawSimulation();
-                 // }
+                 Elem.classList.toggle('dark-mode', event.matches);
+                 Elem.classList.toggle('light-mode', !event.matches);
+                 // No need to redraw simulation canvas immediately unless path color needs instant update
+                 // The 'getPathColor' function will pick up the change on the next frame.
              });
         })();
     </script>
@@ -245,52 +259,99 @@
 
         <p>Sir Isaac Newton's three laws of motion, combined with his law of universal gravitation, revolutionized our understanding of the universe. They not only describe how objects move on Earth but also explain the majestic dance of planets, moons, and stars.</p>
 
-        <h2>Newton's Laws of Motion</h2>
+                <h2>A Brief History of Understanding Orbits</h2>
 
-        <h3>1. Newton's First Law: The Law of Inertia</h3>
-        <p>
-            <strong>"An object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force."</strong>
-        </p>
-        <p>
-            This means things keep doing what they're doing unless something pushes or pulls them. A planet moving through space would continue in a straight line forever if no force acted on it.
-        </p>
+        <p>The quest to understand the motion of the planets has spanned millennia. Early models, like Ptolemy's geocentric system (Earth-centered), were complex but dominated for over 1400 years. The revolution began during the Renaissance.</p>
 
-        <h3>2. Newton's Second Law: Force and Acceleration</h3>
+        <h3>Early Heliocentric Ideas and Precise Data</h3>
         <p>
-            <strong>"The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass." (<code>F = ma</code>)</strong>
-        </p>
-        <p>
-            This law quantifies how forces change motion. A force causes an object to accelerate (change its speed or direction). The bigger the force, the greater the acceleration. The more massive the object, the less it accelerates for the same force. Gravity is the force that constantly accelerates planets, changing their direction.
+            <strong>Nicolaus Copernicus (1473-1543)</strong> proposed a heliocentric (Sun-centered) model, which simplified the observed planetary motions, though he still assumed circular orbits. Later, <strong>Tycho Brahe (1546-1601)</strong>, though not fully accepting Copernicus' model, compiled incredibly precise, detailed observations of planetary positions over many years – data that would prove crucial.
         </p>
 
-        <h3>3. Newton's Third Law: Action and Reaction</h3>
+        <h3>Kepler's Breakthrough: How Planets Move</h3>
         <p>
-            <strong>"For every action, there is an equal and opposite reaction."</strong>
+            Using Brahe's meticulous data, <strong>Johannes Kepler (1571-1630)</strong> mathematically derived three fundamental laws describing *how* planets orbit the Sun:
         </p>
+        <ol>
+            <li><strong>The Law of Ellipses:</strong> Planets orbit the Sun in elliptical paths, with the Sun at one focus of the ellipse (not the center).</li>
+            <li><strong>The Law of Equal Areas:</strong> A line segment joining a planet and the Sun sweeps out equal areas during equal intervals of time. (This means planets move faster when closer to the Sun and slower when farther away).</li>
+            <li><strong>The Law of Harmonies:</strong> The square of the orbital period (the time it takes to complete one orbit) of a planet is directly proportional to the cube of the semi-major axis of its orbit (essentially, its average distance from the Sun). (<code>P² ∝ a³</code>)</li>
+        </ol>
         <p>
-            When one object exerts a force on a second object, the second object exerts an equal and opposite force back on the first. The Sun pulls on the Earth with gravity, and the Earth pulls back on the Sun with the *exact same* gravitational force (though the Sun's huge mass means its acceleration is tiny).
+            Kepler's laws were revolutionary because they accurately described planetary motion based on observation. However, they didn't explain *why* the planets moved this way. What force was responsible?
         </p>
+
+         <h3>Galileo's Observations and Inertia</h3>
+         <p>
+             <strong>Galileo Galilei (1564-1642)</strong>, using the newly invented telescope, made observations (like the phases of Venus and the moons orbiting Jupiter) that strongly supported the heliocentric model. His work on inertia also laid groundwork for understanding motion itself, challenging Aristotelian physics.
+         </p>
+
+        <h3>Newton's Synthesis: Why Planets Move</h3>
+        <p>
+            The answer came from <strong>Sir Isaac Newton (1643-1727)</strong>. Building upon the work of Kepler, Galileo, and others, Newton formulated his three Laws of Motion and the Law of Universal Gravitation.
+        </p>
+        <ul>
+            <li>Newton realized that the same force pulling an apple to the ground – gravity – was also responsible for holding the Moon in orbit around the Earth, and the planets around the Sun.</li>
+            <li>His Law of Universal Gravitation (<code>F = G * (m1 * m2) / r²</code>) described this force mathematically, showing it depends on the masses of the objects and the distance between them.</li>
+            <li>Using this law of gravity combined with his Second Law of Motion (<code>F=ma</code>), Newton was able to mathematically derive Kepler's empirical laws from fundamental physical principles. He showed that an inverse-square force law naturally leads to elliptical orbits.</li>
+        </ul>
+        <p>
+            Newton provided the physical explanation for Kepler's observations, unifying celestial and terrestrial mechanics under a single set of laws. This was a monumental achievement in science.
+        </p>
+
+        <h3>Beyond Newton</h3>
+         <p>
+             While Newtonian mechanics provides an incredibly accurate description of orbits in most situations (including those in our solar system), Albert Einstein's Theory of General Relativity (published 1915) offers a more complete description, especially in regions of very strong gravity or when extremely high precision is needed (like explaining the subtle precession of Mercury's orbit). However, for predicting the orbits of planets, moons, and spacecraft under typical conditions, Newton's laws remain the essential foundation.
+         </p>
+        
+
+         <h2>Newton's Laws of Motion</h2>
+
+         <h3>1. Newton's First Law: The Law of Inertia</h3>
+         <blockquote>
+             <strong>"An object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force."</strong>
+         </blockquote>
+         <p>
+             This means things keep doing what they're doing unless something pushes or pulls them. A planet moving through space would continue in a straight line forever if no force acted on it.
+         </p>
+ 
+         <h3>2. Newton's Second Law: Force and Acceleration</h3>
+         <blockquote>
+             <strong>"The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass." (<code>F = ma</code>)</strong>
+         </blockquote>
+         <p>
+             This law quantifies how forces change motion. A force causes an object to accelerate (change its speed or direction). The bigger the force, the greater the acceleration. The more massive the object, the less it accelerates for the same force. Gravity is the force that constantly accelerates planets, changing their direction.
+         </p>
+ 
+         <h3>3. Newton's Third Law: Action and Reaction</h3>
+         <blockquote>
+             <strong>"For every action, there is an equal and opposite reaction."</strong>
+         </blockquote>
+         <p>
+             When one object exerts a force on a second object, the second object exerts an equal and opposite force back on the first. The Sun pulls on the Earth with gravity, and the Earth pulls back on the Sun with the *exact same* gravitational force (though the Sun's huge mass means its acceleration is tiny).
+         </p>
+
 
         <h2>Predicting Orbits with Newton's Laws</h2>
 
-        <p>How do these laws explain orbits?</p>
+        <p>So, how exactly do Newton's laws explain orbits, building on the historical context?</p>
         <ul>
-            <li><strong>Inertia (Law 1):</strong> A planet has inertia; it *wants* to keep moving in a straight line.</li>
-            <li><strong>Gravity (Universal Gravitation):</strong> The Sun (or any massive body) exerts a gravitational force on the planet. This force pulls the planet towards the Sun. This force follows the inverse square law: <code>F = G * (m1 * m2) / r^2</code>, where <code>G</code> is the gravitational constant, <code>m1</code> and <code>m2</code> are the masses, and <code>r</code> is the distance between their centers.</li>
-            <li><strong>Acceleration (Law 2):</strong> The gravitational force acts as the unbalanced, *centripetal* (center-seeking) force. According to <code>F=ma</code>, this force causes the planet to constantly accelerate towards the Sun. This acceleration doesn't necessarily change the planet's speed much (in a near-circular orbit) but continuously changes its *direction*.</li>
-            <li><strong>The Result:</strong> The combination of the planet's tangential inertia (tendency to move straight) and the Sun's inward gravitational pull (causing acceleration/direction change) results in a stable, curved path – an orbit! If the speed is just right for the gravity at that distance, it forms a closed ellipse or circle. Too slow, it might crash. Too fast, it might escape.</li>
+            <li><strong>Inertia (Law 1):</strong> A planet has inertia; it *wants* to keep moving in a straight line tangent to its path.</li>
+            <li><strong>Gravity (Universal Gravitation):</strong> The Sun (or star) exerts a continuous gravitational force on the planet, pulling it inwards towards the star. This force follows Newton's inverse square law: <code>F = G * (m1 * m2) / r^2</code>.</li>
+            <li><strong>Acceleration (Law 2):</strong> This gravitational force is the unbalanced, *centripetal* (center-seeking) force acting on the planet. According to <code>F=ma</code>, this force causes the planet to constantly accelerate towards the star. This acceleration continuously changes the *direction* of the planet's velocity vector, bending its path away from a straight line.</li>
+            <li><strong>The Resulting Orbit:</strong> The constant interplay between the planet's inertia (trying to go straight) and the gravitational pull (constantly redirecting it inwards) results in a stable, curved path – the orbit. As Kepler discovered and Newton explained, this path is typically an ellipse.</li>
         </ul>
 
         <h2>Orbital Simulation</h2>
-        <p>This simple simulation demonstrates how gravity causes a smaller body (planet) to orbit a larger, stationary body (star). It uses Newton's laws in discrete time steps:</p>
+        <p>This simulation visually demonstrates the process described above. It iteratively applies Newton's laws:</p>
         <ol>
-            <li>Calculate the gravitational force between the star and planet based on their masses and distance (<code>F = G * m1 * m2 / r^2</code>).</li>
-            <li>Calculate the planet's acceleration using the force and the planet's mass (<code>a = F / m_planet</code>).</li>
-            <li>Update the planet's velocity based on this acceleration over a small time step (<code>new_velocity = old_velocity + acceleration * time_step</code>).</li>
-            <li>Update the planet's position based on its new velocity over the time step (<code>new_position = old_position + new_velocity * time_step</code>).</li>
-            <li>Repeat.</li>
+            <li>Calculate the gravitational force based on Newton's Universal Gravitation.</li>
+            <li>Use Newton's Second Law (<code>a = F / m</code>) to find the planet's acceleration towards the star.</li>
+            <li>Update the planet's velocity by adding the effect of this acceleration over a small time step.</li>
+            <li>Update the planet's position based on its new velocity over the time step.</li>
+            <li>Repeat, tracing the path which emerges from these simple rules.</li>
         </ol>
-        <p>You can adjust the strength of the gravitational effect (simulated <code>G</code>), the initial speed of the planet, and its mass to see how orbits change.</p>
+        <p>Adjust the parameters to see how changing initial conditions or the strength of gravity (simulated <code>G</code>) affects the resulting orbit, illustrating the principles discovered by Kepler and explained by Newton.</p>
 
         <div id="simulation-container">
             <canvas id="orbitCanvas" width="500" height="400"></canvas>
@@ -304,12 +365,12 @@
                     <input type="range" id="speedSlider" min="0.1" max="3" step="0.1" value="1.5">
                 </div>
                  <div class="control-group">
-                    <label for="massSlider">Planet Mass: <span id="massValue">1</span></label>
+                    <label for="massSlider">Planet Mass Factor: <span id="massValue">1</span></label>
                     <input type="range" id="massSlider" min="0.1" max="10" step="0.1" value="1">
                 </div>
                 <button id="resetButton">Reset Simulation</button>
             </div>
-             <p style="font-size: 0.8em; margin-top: 15px; color: var(--label-color);">Note: The simulation uses simplified units and a fixed star. Changing 'Planet Mass' mainly affects how strongly gravity pulls it for a given G-factor in this model (due to <code>a = F/m</code>).</p>
+             <p style="font-size: 0.8em; margin-top: 15px; color: var(--label-color);">Note: The simulation uses simplified units and a fixed star. 'Planet Mass Factor' inversely scales acceleration (<code>a = F/m</code>).</p>
         </div>
 
     </div>
@@ -348,7 +409,7 @@
         // Function to get the current path color from CSS variables
         function getPathColor() {
             // Get the computed style of the body (or any element) to read the variable
-            return getComputedStyle(document.body).getPropertyValue('--path-color').trim();
+            return getComputedStyle(document.body).getPropertyValue('--path-color').trim() || 'rgba(255, 255, 255, 0.5)'; // Fallback
         }
 
         function resetSimulation() {
@@ -356,18 +417,14 @@
                 cancelAnimationFrame(animationFrameId);
             }
 
-            // Update parameters from sliders
             G = parseFloat(controls.gravitySlider.value);
             initialSpeed = parseFloat(controls.speedSlider.value);
-            planetMassFactor = parseFloat(controls.massSlider.value); // Used inversely in acceleration
+            planetMassFactor = parseFloat(controls.massSlider.value);
 
-            // Update displayed values
             controls.gravityValue.textContent = G.toFixed(1);
             controls.speedValue.textContent = initialSpeed.toFixed(1);
             controls.massValue.textContent = planetMassFactor.toFixed(1);
 
-
-            // Reset planet state
             planet = {
                 x: canvas.width / 2,
                 y: canvas.height / 2 - 100, // Start above the star
@@ -379,18 +436,11 @@
             };
             path = []; // Clear the path
 
-            // Start the animation loop
             animate();
         }
 
         function draw() {
-            // Clear canvas
-            // Use the canvas background color from CSS variable (though it's set in CSS already)
-            // ctx.fillStyle = getComputedStyle(canvas).backgroundColor;
-            // ctx.fillRect(0, 0, canvas.width, canvas.height);
-            // Clearing is simpler:
              ctx.clearRect(0, 0, canvas.width, canvas.height);
-
 
             // Draw Star
             ctx.fillStyle = star.color;
@@ -402,7 +452,7 @@
             ctx.strokeStyle = getPathColor(); // Use variable color
             ctx.lineWidth = 1;
             ctx.beginPath();
-            if (path.length > 0) {
+            if (path.length > 1) { // Need at least 2 points to draw a line
                 ctx.moveTo(path[0].x, path[0].y);
                 for (let i = 1; i < path.length; i++) {
                     ctx.lineTo(path[i].x, path[i].y);
@@ -424,18 +474,24 @@
             const dist = Math.sqrt(distSq);
 
             // Avoid division by zero or extreme forces if too close
-            if (dist < star.radius + planet.radius) {
+            // Make collision slightly larger than visual radius for stability
+            if (dist < star.radius + planet.radius + 1) {
                  console.log("Collision or too close!");
-                 return;
+                 // Stop animation completely on collision for simplicity
+                 if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null; // Prevent further calls
+                 }
+                 return; // Stop updating
             }
 
+            // Simplified force magnitude (proportional to G*M_star / r^2)
             const forceMagnitude = (G * star.mass) / distSq;
-            const base_ax = (forceMagnitude * dx) / dist;
-            const base_ay = (forceMagnitude * dy) / dist;
 
-            // Apply the planet mass factor inversely to acceleration
-            const ax = base_ax / planet.mass;
-            const ay = base_ay / planet.mass;
+            // Acceleration components (a = F/m_planet). F is calculated above.
+            // We use planet.mass (which is the massFactor) to scale acceleration inversely.
+            const ax = (forceMagnitude * dx / dist) / planet.mass;
+            const ay = (forceMagnitude * dy / dist) / planet.mass;
 
 
             // Update velocity (using a fixed time step dt=1 for simplicity)
@@ -456,21 +512,26 @@
         function animate() {
             update();
             draw(); // Draw will now use the theme-appropriate path color
-            animationFrameId = requestAnimationFrame(animate);
+            if (animationFrameId !== null) { // Check if animation was stopped (e.g., by collision)
+               animationFrameId = requestAnimationFrame(animate);
+            }
         }
 
-        // Expose redraw function if needed by theme switcher (optional)
-        // window.redrawSimulation = draw;
-
-        // Event Listeners for controls
+        // Event Listeners for controls (No reset on input change, only on button)
         controls.gravitySlider.addEventListener('input', () => {
-            controls.gravityValue.textContent = parseFloat(controls.gravitySlider.value).toFixed(1);
+             G = parseFloat(controls.gravitySlider.value); // Update G dynamically
+             controls.gravityValue.textContent = G.toFixed(1);
+             // Note: Simulation adapts to new G without full reset now
         });
         controls.speedSlider.addEventListener('input', () => {
+            // Note: Changing initial speed mid-simulation doesn't make physical sense
+            // So we only update the display; Reset button applies the new value.
             controls.speedValue.textContent = parseFloat(controls.speedSlider.value).toFixed(1);
         });
          controls.massSlider.addEventListener('input', () => {
-            controls.massValue.textContent = parseFloat(controls.massSlider.value).toFixed(1);
+             planet.mass = parseFloat(controls.massSlider.value); // Update planet mass factor dynamically
+             controls.massValue.textContent = planet.mass.toFixed(1);
+             // Note: Simulation adapts to new mass factor without full reset
         });
         controls.resetButton.addEventListener('click', resetSimulation);
 
