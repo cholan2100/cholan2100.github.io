@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newton's Laws & Planetary Orbits</title>
+    <style>
+        /* --- Theme Variables --- */
+        :root {
+            --bg-color: #f4f4f4;
+            --text-color: #333;
+            --container-bg: #fff;
+            --container-shadow: rgba(0, 0, 0, 0.1);
+            --header-color: #0056b3;
+            --header-border: #0056b3;
+            --secondary-header-border: #ccc;
+            --link-color: #007bff;
+            --link-hover-color: #0056b3;
+            --button-bg: #007bff;
+            --button-text: white;
+            --button-hover-bg: #0056b3;
+            --code-bg: #eee;
+            --code-text: #333;
+            --input-border: #ccc;
+            --simulation-bg: #e9e9e9;
+            --simulation-border: #ddd;
+            --canvas-bg: #000; /* Space */
+            --canvas-border: #555;
+            --path-color: rgba(255, 255, 255, 0.5); /* White path for black space */
+            --label-color: #555;
+        }
+
+        /* --- Dark Mode Overrides --- */
+        /* Use class selector for JS control */
+        html.dark-mode {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --container-bg: #1e1e1e;
+            --container-shadow: rgba(255, 255, 255, 0.08);
+            --header-color: #64b5f6; /* Lighter blue */
+            --header-border: #64b5f6;
+            --secondary-header-border: #444;
+            --link-color: #82aaff;
+            --link-hover-color: #64b5f6;
+            --button-bg: #0277bd; /* Slightly adjusted blue */
+            --button-text: white;
+            --button-hover-bg: #039be5;
+            --code-bg: #333;
+            --code-text: #e0e0e0;
+            --input-border: #555;
+            --simulation-bg: #2a2a2a;
+            --simulation-border: #444;
+            --canvas-bg: #000; /* Keep space black */
+            --canvas-border: #333;
+            --path-color: rgba(200, 200, 255, 0.6); /* Lighter, slightly blue path */
+            --label-color: #bbb;
+        }
+
+        /* --- Base Styles using Variables --- */
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--container-bg);
+            box-shadow: 0 0 10px var(--container-shadow);
+            border-radius: 8px; /* Slightly rounded corners */
+            transition: background-color 0.3s;
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid var(--header-border);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            border-bottom: 1px solid var(--secondary-header-border);
+            padding-bottom: 5px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        a { /* Added basic link styling */
+           color: var(--link-color);
+           text-decoration: none;
+        }
+        a:hover {
+           color: var(--link-hover-color);
+           text-decoration: underline;
+        }
+
+        code {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        /* --- Simulation Specific Styles --- */
+        #simulation-container {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid var(--simulation-border);
+            background-color: var(--simulation-bg);
+            border-radius: 4px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        #orbitCanvas {
+            background-color: var(--canvas-bg);
+            border: 1px solid var(--canvas-border);
+            display: block;
+            margin: 15px auto;
+        }
+
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            color: var(--label-color);
+        }
+
+        input[type="range"] {
+            width: 150px;
+            cursor: pointer;
+        }
+        /* Basic styling for range inputs */
+        input[type="range"] {
+            -webkit-appearance: none; /* Override default look */
+            appearance: none;
+            height: 8px;
+            background: var(--secondary-header-border); /* Track color */
+            border-radius: 4px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb { /* Thumb for Chrome/Safari */
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--link-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb { /* Thumb for Firefox */
+            width: 18px;
+            height: 18px;
+            background: var(--link-color);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+
+        button {
+            padding: 8px 15px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--button-hover-bg);
+        }
+    </style>
+
+    <script>
+        // Run this early to set the theme class before rendering starts
+        (function() {
+            const Elem = document.documentElement; // Get the <html> element
+            // Basic check for system preference. Doesn't include manual override yet.
+            // More robust solutions would use localStorage to remember a user's choice.
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                Elem.classList.add('dark-mode');
+            } else {
+                Elem.classList.add('light-mode'); // Explicitly add light-mode class as well
+            }
+
+            // Optional: Listen for changes in system preference
+             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                 if (event.matches) {
+                     Elem.classList.add('dark-mode');
+                     Elem.classList.remove('light-mode');
+                 } else {
+                     Elem.classList.add('light-mode');
+                     Elem.classList.remove('dark-mode');
+                 }
+                 // Re-run simulation draw if needed to update path color immediately
+                 // (Requires simulation script to expose a draw function globally or handle this internally)
+                 // if (typeof window.redrawSimulation === 'function') {
+                 //    window.redrawSimulation();
+                 // }
+             });
+        })();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Newton's Laws of Motion and Planetary Orbits</h1>
+
+        <p>Sir Isaac Newton's three laws of motion, combined with his law of universal gravitation, revolutionized our understanding of the universe. They not only describe how objects move on Earth but also explain the majestic dance of planets, moons, and stars.</p>
+
+        <h2>Newton's Laws of Motion</h2>
+
+        <h3>1. Newton's First Law: The Law of Inertia</h3>
+        <p>
+            <strong>"An object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force."</strong>
+        </p>
+        <p>
+            This means things keep doing what they're doing unless something pushes or pulls them. A planet moving through space would continue in a straight line forever if no force acted on it.
+        </p>
+
+        <h3>2. Newton's Second Law: Force and Acceleration</h3>
+        <p>
+            <strong>"The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass." (<code>F = ma</code>)</strong>
+        </p>
+        <p>
+            This law quantifies how forces change motion. A force causes an object to accelerate (change its speed or direction). The bigger the force, the greater the acceleration. The more massive the object, the less it accelerates for the same force. Gravity is the force that constantly accelerates planets, changing their direction.
+        </p>
+
+        <h3>3. Newton's Third Law: Action and Reaction</h3>
+        <p>
+            <strong>"For every action, there is an equal and opposite reaction."</strong>
+        </p>
+        <p>
+            When one object exerts a force on a second object, the second object exerts an equal and opposite force back on the first. The Sun pulls on the Earth with gravity, and the Earth pulls back on the Sun with the *exact same* gravitational force (though the Sun's huge mass means its acceleration is tiny).
+        </p>
+
+        <h2>Predicting Orbits with Newton's Laws</h2>
+
+        <p>How do these laws explain orbits?</p>
+        <ul>
+            <li><strong>Inertia (Law 1):</strong> A planet has inertia; it *wants* to keep moving in a straight line.</li>
+            <li><strong>Gravity (Universal Gravitation):</strong> The Sun (or any massive body) exerts a gravitational force on the planet. This force pulls the planet towards the Sun. This force follows the inverse square law: <code>F = G * (m1 * m2) / r^2</code>, where <code>G</code> is the gravitational constant, <code>m1</code> and <code>m2</code> are the masses, and <code>r</code> is the distance between their centers.</li>
+            <li><strong>Acceleration (Law 2):</strong> The gravitational force acts as the unbalanced, *centripetal* (center-seeking) force. According to <code>F=ma</code>, this force causes the planet to constantly accelerate towards the Sun. This acceleration doesn't necessarily change the planet's speed much (in a near-circular orbit) but continuously changes its *direction*.</li>
+            <li><strong>The Result:</strong> The combination of the planet's tangential inertia (tendency to move straight) and the Sun's inward gravitational pull (causing acceleration/direction change) results in a stable, curved path – an orbit! If the speed is just right for the gravity at that distance, it forms a closed ellipse or circle. Too slow, it might crash. Too fast, it might escape.</li>
+        </ul>
+
+        <h2>Orbital Simulation</h2>
+        <p>This simple simulation demonstrates how gravity causes a smaller body (planet) to orbit a larger, stationary body (star). It uses Newton's laws in discrete time steps:</p>
+        <ol>
+            <li>Calculate the gravitational force between the star and planet based on their masses and distance (<code>F = G * m1 * m2 / r^2</code>).</li>
+            <li>Calculate the planet's acceleration using the force and the planet's mass (<code>a = F / m_planet</code>).</li>
+            <li>Update the planet's velocity based on this acceleration over a small time step (<code>new_velocity = old_velocity + acceleration * time_step</code>).</li>
+            <li>Update the planet's position based on its new velocity over the time step (<code>new_position = old_position + new_velocity * time_step</code>).</li>
+            <li>Repeat.</li>
+        </ol>
+        <p>You can adjust the strength of the gravitational effect (simulated <code>G</code>), the initial speed of the planet, and its mass to see how orbits change.</p>
+
+        <div id="simulation-container">
+            <canvas id="orbitCanvas" width="500" height="400"></canvas>
+            <div class="controls">
+                <div class="control-group">
+                    <label for="gravitySlider">Gravitational Effect (G-factor): <span id="gravityValue">1</span></label>
+                    <input type="range" id="gravitySlider" min="0.1" max="5" step="0.1" value="1">
+                </div>
+                <div class="control-group">
+                    <label for="speedSlider">Initial Speed: <span id="speedValue">1.5</span></label>
+                    <input type="range" id="speedSlider" min="0.1" max="3" step="0.1" value="1.5">
+                </div>
+                 <div class="control-group">
+                    <label for="massSlider">Planet Mass: <span id="massValue">1</span></label>
+                    <input type="range" id="massSlider" min="0.1" max="10" step="0.1" value="1">
+                </div>
+                <button id="resetButton">Reset Simulation</button>
+            </div>
+             <p style="font-size: 0.8em; margin-top: 15px; color: var(--label-color);">Note: The simulation uses simplified units and a fixed star. Changing 'Planet Mass' mainly affects how strongly gravity pulls it for a given G-factor in this model (due to <code>a = F/m</code>).</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Simulation Script (mostly unchanged, but uses CSS var for path)
+        const canvas = document.getElementById('orbitCanvas');
+        const ctx = canvas.getContext('2d');
+        const controls = {
+            gravitySlider: document.getElementById('gravitySlider'),
+            speedSlider: document.getElementById('speedSlider'),
+            massSlider: document.getElementById('massSlider'),
+            resetButton: document.getElementById('resetButton'),
+            gravityValue: document.getElementById('gravityValue'),
+            speedValue: document.getElementById('speedValue'),
+            massValue: document.getElementById('massValue')
+        };
+
+        let G = 1; // Gravitational constant factor
+        let initialSpeed = 1.5;
+        let planetMassFactor = 1; // Relative mass for acceleration calc
+
+        let star = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            mass: 1000, // Much larger mass for the star
+            radius: 15,
+            color: 'yellow' // Keep star yellow
+        };
+
+        let planet = {}; // Will be initialized in resetSimulation
+        let path = []; // To store previous positions
+        const MAX_PATH_LENGTH = 500; // Limit path length for performance
+        let animationFrameId;
+
+        // Function to get the current path color from CSS variables
+        function getPathColor() {
+            // Get the computed style of the body (or any element) to read the variable
+            return getComputedStyle(document.body).getPropertyValue('--path-color').trim();
+        }
+
+        function resetSimulation() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+
+            // Update parameters from sliders
+            G = parseFloat(controls.gravitySlider.value);
+            initialSpeed = parseFloat(controls.speedSlider.value);
+            planetMassFactor = parseFloat(controls.massSlider.value); // Used inversely in acceleration
+
+            // Update displayed values
+            controls.gravityValue.textContent = G.toFixed(1);
+            controls.speedValue.textContent = initialSpeed.toFixed(1);
+            controls.massValue.textContent = planetMassFactor.toFixed(1);
+
+
+            // Reset planet state
+            planet = {
+                x: canvas.width / 2,
+                y: canvas.height / 2 - 100, // Start above the star
+                vx: initialSpeed, // Initial velocity to the right
+                vy: 0,
+                mass: planetMassFactor, // Store the factor
+                radius: 5,
+                color: 'lightblue' // Keep planet lightblue (visible on black)
+            };
+            path = []; // Clear the path
+
+            // Start the animation loop
+            animate();
+        }
+
+        function draw() {
+            // Clear canvas
+            // Use the canvas background color from CSS variable (though it's set in CSS already)
+            // ctx.fillStyle = getComputedStyle(canvas).backgroundColor;
+            // ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Clearing is simpler:
+             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+            // Draw Star
+            ctx.fillStyle = star.color;
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Path - Get color dynamically
+            ctx.strokeStyle = getPathColor(); // Use variable color
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            if (path.length > 0) {
+                ctx.moveTo(path[0].x, path[0].y);
+                for (let i = 1; i < path.length; i++) {
+                    ctx.lineTo(path[i].x, path[i].y);
+                }
+                ctx.stroke();
+            }
+
+             // Draw Planet
+            ctx.fillStyle = planet.color;
+            ctx.beginPath();
+            ctx.arc(planet.x, planet.y, planet.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function update() {
+            const dx = star.x - planet.x;
+            const dy = star.y - planet.y;
+            const distSq = dx * dx + dy * dy;
+            const dist = Math.sqrt(distSq);
+
+            // Avoid division by zero or extreme forces if too close
+            if (dist < star.radius + planet.radius) {
+                 console.log("Collision or too close!");
+                 return;
+            }
+
+            const forceMagnitude = (G * star.mass) / distSq;
+            const base_ax = (forceMagnitude * dx) / dist;
+            const base_ay = (forceMagnitude * dy) / dist;
+
+            // Apply the planet mass factor inversely to acceleration
+            const ax = base_ax / planet.mass;
+            const ay = base_ay / planet.mass;
+
+
+            // Update velocity (using a fixed time step dt=1 for simplicity)
+            planet.vx += ax;
+            planet.vy += ay;
+
+            // Update position
+            planet.x += planet.vx;
+            planet.y += planet.vy;
+
+            // Add current position to path
+            path.push({ x: planet.x, y: planet.y });
+            if (path.length > MAX_PATH_LENGTH) {
+                path.shift(); // Remove the oldest point
+            }
+        }
+
+        function animate() {
+            update();
+            draw(); // Draw will now use the theme-appropriate path color
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        // Expose redraw function if needed by theme switcher (optional)
+        // window.redrawSimulation = draw;
+
+        // Event Listeners for controls
+        controls.gravitySlider.addEventListener('input', () => {
+            controls.gravityValue.textContent = parseFloat(controls.gravitySlider.value).toFixed(1);
+        });
+        controls.speedSlider.addEventListener('input', () => {
+            controls.speedValue.textContent = parseFloat(controls.speedSlider.value).toFixed(1);
+        });
+         controls.massSlider.addEventListener('input', () => {
+            controls.massValue.textContent = parseFloat(controls.massSlider.value).toFixed(1);
+        });
+        controls.resetButton.addEventListener('click', resetSimulation);
+
+        // Initial setup
+        resetSimulation();
+
+    </script>
+
+</body>
+</html>
