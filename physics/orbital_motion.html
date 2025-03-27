@@ -67,7 +67,7 @@
             padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -76,179 +76,46 @@
             padding: 20px;
             background-color: var(--container-bg);
             box-shadow: 0 0 10px var(--container-shadow);
-            border-radius: 8px; /* Slightly rounded corners */
+            border-radius: 8px;
             transition: background-color 0.3s;
         }
 
-        h1, h2, h3 {
-            color: var(--header-color);
-        }
-
-        h1 {
-            text-align: center;
-            border-bottom: 2px solid var(--header-border);
-            padding-bottom: 10px;
-            margin-bottom: 25px;
-        }
-
-        h2 {
-            margin-top: 30px;
-            border-bottom: 1px solid var(--secondary-header-border);
-            padding-bottom: 5px;
-        }
-
-        h3 {
-             margin-top: 20px;
-        }
-
-        p {
-            margin-bottom: 15px;
-        }
-
-        ul {
-            list-style: disc;
-            margin-left: 20px;
-            margin-bottom: 15px;
-        }
-        ol {
-            margin-left: 20px;
-            margin-bottom: 15px;
-        }
-
-        li {
-            margin-bottom: 8px;
-        }
-
-        strong {
-            font-weight: bold;
-        }
-
-        a { /* Added basic link styling */
-           color: var(--link-color);
-           text-decoration: none;
-        }
-        a:hover {
-           color: var(--link-hover-color);
-           text-decoration: underline;
-        }
-
-        code {
-            background-color: var(--code-bg);
-            color: var(--code-text);
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-family: monospace;
-        }
-
-        blockquote { /* Styling for Kepler's laws */
-            margin-left: 20px;
-            padding: 10px 15px;
-            border-left: 5px solid var(--blockquote-border);
-            background-color: var(--blockquote-bg);
-            font-style: italic;
-            margin-bottom: 15px;
-        }
+        h1, h2, h3 { color: var(--header-color); }
+        h1 { text-align: center; border-bottom: 2px solid var(--header-border); padding-bottom: 10px; margin-bottom: 25px; }
+        h2 { margin-top: 30px; border-bottom: 1px solid var(--secondary-header-border); padding-bottom: 5px; }
+        h3 { margin-top: 20px; }
+        p { margin-bottom: 15px; }
+        ul, ol { list-style: disc; margin-left: 20px; margin-bottom: 15px; }
+        ol { list-style: decimal; }
+        li { margin-bottom: 8px; }
+        strong { font-weight: bold; }
+        a { color: var(--link-color); text-decoration: none; }
+        a:hover { color: var(--link-hover-color); text-decoration: underline; }
+        code { background-color: var(--code-bg); color: var(--code-text); padding: 2px 4px; border-radius: 3px; font-family: monospace; }
+        blockquote { margin-left: 20px; padding: 10px 15px; border-left: 5px solid var(--blockquote-border); background-color: var(--blockquote-bg); font-style: italic; margin-bottom: 15px; }
 
         /* --- Simulation Specific Styles --- */
-        #simulation-container {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid var(--simulation-border);
-            background-color: var(--simulation-bg);
-            border-radius: 4px;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        #orbitCanvas {
-            background-color: var(--canvas-bg);
-            border: 1px solid var(--canvas-border);
-            display: block;
-            margin: 15px auto;
-        }
-
-        .controls {
-            margin-top: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        label {
-            font-size: 0.9em;
-            margin-bottom: 5px;
-            color: var(--label-color);
-        }
-
-        input[type="range"] {
-            width: 150px;
-            cursor: pointer;
-        }
-        /* Basic styling for range inputs */
-        input[type="range"] {
-            -webkit-appearance: none; /* Override default look */
-            appearance: none;
-            height: 8px;
-            background: var(--secondary-header-border); /* Track color */
-            border-radius: 4px;
-            outline: none;
-        }
-        input[type="range"]::-webkit-slider-thumb { /* Thumb for Chrome/Safari */
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            background: var(--link-color);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        input[type="range"]::-moz-range-thumb { /* Thumb for Firefox */
-            width: 18px;
-            height: 18px;
-            background: var(--link-color);
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-        }
-
-
-        button {
-            padding: 8px 15px;
-            background-color: var(--button-bg);
-            color: var(--button-text);
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        button:hover {
-            background-color: var(--button-hover-bg);
-        }
+        #simulation-container { text-align: center; margin-top: 20px; padding: 15px; border: 1px solid var(--simulation-border); background-color: var(--simulation-bg); border-radius: 4px; transition: background-color 0.3s, border-color 0.3s; }
+        #orbitCanvas { background-color: var(--canvas-bg); border: 1px solid var(--canvas-border); display: block; margin: 15px auto; }
+        .controls { margin-top: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; align-items: center; }
+        .control-group { display: flex; flex-direction: column; align-items: center; }
+        label { font-size: 0.9em; margin-bottom: 5px; color: var(--label-color); }
+        input[type="range"] { width: 150px; cursor: pointer; -webkit-appearance: none; appearance: none; height: 8px; background: var(--secondary-header-border); border-radius: 4px; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--link-color); border-radius: 50%; cursor: pointer; }
+        input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; background: var(--link-color); border-radius: 50%; cursor: pointer; border: none; }
+        button { padding: 8px 15px; background-color: var(--button-bg); color: var(--button-text); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; }
+        button:hover { background-color: var(--button-hover-bg); }
     </style>
 
     <script>
-        // Run this early to set the theme class before rendering starts
+        // Theme detection script (runs early)
         (function() {
-            const Elem = document.documentElement; // Get the <html> element
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                Elem.classList.add('dark-mode');
-            } else {
-                Elem.classList.add('light-mode');
-            }
+            const Elem = document.documentElement;
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            Elem.classList.add(prefersDark ? 'dark-mode' : 'light-mode');
              window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
                  Elem.classList.toggle('dark-mode', event.matches);
                  Elem.classList.toggle('light-mode', !event.matches);
-                 // No need to redraw simulation canvas immediately unless path color needs instant update
-                 // The 'getPathColor' function will pick up the change on the next frame.
              });
         })();
     </script>
@@ -259,99 +126,60 @@
 
         <p>Sir Isaac Newton's three laws of motion, combined with his law of universal gravitation, revolutionized our understanding of the universe. They not only describe how objects move on Earth but also explain the majestic dance of planets, moons, and stars.</p>
 
-                <h2>A Brief History of Understanding Orbits</h2>
+        <h2>Newton's Laws of Motion</h2>
+        <h3>1. Newton's First Law: The Law of Inertia</h3>
+        <blockquote><strong>"An object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force."</strong></blockquote>
+        <p>This means things keep doing what they're doing unless something pushes or pulls them. A planet moving through space would continue in a straight line forever if no force acted on it.</p>
+        <h3>2. Newton's Second Law: Force and Acceleration</h3>
+        <blockquote><strong>"The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass." (<code>F = ma</code>)</strong></blockquote>
+        <p>This law quantifies how forces change motion. A force causes an object to accelerate (change its speed or direction). The bigger the force, the greater the acceleration. The more massive the object, the less it accelerates for the same force. Gravity is the force that constantly accelerates planets, changing their direction.</p>
+        <h3>3. Newton's Third Law: Action and Reaction</h3>
+        <blockquote><strong>"For every action, there is an equal and opposite reaction."</strong></blockquote>
+        <p>When one object exerts a force on a second object, the second object exerts an equal and opposite force back on the first. The Sun pulls on the Earth with gravity, and the Earth pulls back on the Sun with the *exact same* gravitational force (though the Sun's huge mass means its acceleration is tiny).</p>
 
+        <h2>A Brief History of Understanding Orbits</h2>
         <p>The quest to understand the motion of the planets has spanned millennia. Early models, like Ptolemy's geocentric system (Earth-centered), were complex but dominated for over 1400 years. The revolution began during the Renaissance.</p>
-
         <h3>Early Heliocentric Ideas and Precise Data</h3>
-        <p>
-            <strong>Nicolaus Copernicus (1473-1543)</strong> proposed a heliocentric (Sun-centered) model, which simplified the observed planetary motions, though he still assumed circular orbits. Later, <strong>Tycho Brahe (1546-1601)</strong>, though not fully accepting Copernicus' model, compiled incredibly precise, detailed observations of planetary positions over many years – data that would prove crucial.
-        </p>
-
+        <p><strong>Nicolaus Copernicus (1473-1543)</strong> proposed a heliocentric (Sun-centered) model, simplifying planetary motions but still assuming circular orbits. <strong>Tycho Brahe (1546-1601)</strong> compiled incredibly precise observations, crucial data for later breakthroughs.</p>
         <h3>Kepler's Breakthrough: How Planets Move</h3>
-        <p>
-            Using Brahe's meticulous data, <strong>Johannes Kepler (1571-1630)</strong> mathematically derived three fundamental laws describing *how* planets orbit the Sun:
-        </p>
+        <p>Using Brahe's data, <strong>Johannes Kepler (1571-1630)</strong> derived three laws describing *how* planets orbit:</p>
         <ol>
-            <li><strong>The Law of Ellipses:</strong> Planets orbit the Sun in elliptical paths, with the Sun at one focus of the ellipse (not the center).</li>
-            <li><strong>The Law of Equal Areas:</strong> A line segment joining a planet and the Sun sweeps out equal areas during equal intervals of time. (This means planets move faster when closer to the Sun and slower when farther away).</li>
-            <li><strong>The Law of Harmonies:</strong> The square of the orbital period (the time it takes to complete one orbit) of a planet is directly proportional to the cube of the semi-major axis of its orbit (essentially, its average distance from the Sun). (<code>P² ∝ a³</code>)</li>
+            <li><strong>The Law of Ellipses:</strong> Planets orbit in ellipses, with the Sun at one focus.</li>
+            <li><strong>The Law of Equal Areas:</strong> A line joining a planet and the Sun sweeps out equal areas in equal times (planets move faster when closer).</li>
+            <li><strong>The Law of Harmonies:</strong> The square of the orbital period is proportional to the cube of the semi-major axis (<code>P² ∝ a³</code>).</li>
         </ol>
-        <p>
-            Kepler's laws were revolutionary because they accurately described planetary motion based on observation. However, they didn't explain *why* the planets moved this way. What force was responsible?
-        </p>
-
+        <p>Kepler described *how* but not *why*.</p>
          <h3>Galileo's Observations and Inertia</h3>
-         <p>
-             <strong>Galileo Galilei (1564-1642)</strong>, using the newly invented telescope, made observations (like the phases of Venus and the moons orbiting Jupiter) that strongly supported the heliocentric model. His work on inertia also laid groundwork for understanding motion itself, challenging Aristotelian physics.
-         </p>
-
+         <p><strong>Galileo Galilei (1564-1642)</strong> used telescopes to provide evidence for the heliocentric model (phases of Venus, Jupiter's moons) and developed concepts of inertia.</p>
         <h3>Newton's Synthesis: Why Planets Move</h3>
-        <p>
-            The answer came from <strong>Sir Isaac Newton (1643-1727)</strong>. Building upon the work of Kepler, Galileo, and others, Newton formulated his three Laws of Motion and the Law of Universal Gravitation.
-        </p>
+        <p><strong>Sir Isaac Newton (1643-1727)</strong> unified celestial and terrestrial mechanics:</p>
         <ul>
-            <li>Newton realized that the same force pulling an apple to the ground – gravity – was also responsible for holding the Moon in orbit around the Earth, and the planets around the Sun.</li>
-            <li>His Law of Universal Gravitation (<code>F = G * (m1 * m2) / r²</code>) described this force mathematically, showing it depends on the masses of the objects and the distance between them.</li>
-            <li>Using this law of gravity combined with his Second Law of Motion (<code>F=ma</code>), Newton was able to mathematically derive Kepler's empirical laws from fundamental physical principles. He showed that an inverse-square force law naturally leads to elliptical orbits.</li>
+            <li>His Law of Universal Gravitation (<code>F = G * (m1 * m2) / r²</code>) described the force responsible.</li>
+            <li>Using <code>F=ma</code>, he mathematically derived Kepler's laws from his gravitational law, explaining *why* orbits are elliptical.</li>
         </ul>
-        <p>
-            Newton provided the physical explanation for Kepler's observations, unifying celestial and terrestrial mechanics under a single set of laws. This was a monumental achievement in science.
-        </p>
-
+        <p>This provided the physical explanation for Kepler's observations.</p>
         <h3>Beyond Newton</h3>
-         <p>
-             While Newtonian mechanics provides an incredibly accurate description of orbits in most situations (including those in our solar system), Albert Einstein's Theory of General Relativity (published 1915) offers a more complete description, especially in regions of very strong gravity or when extremely high precision is needed (like explaining the subtle precession of Mercury's orbit). However, for predicting the orbits of planets, moons, and spacecraft under typical conditions, Newton's laws remain the essential foundation.
-         </p>
-        
-
-         <h2>Newton's Laws of Motion</h2>
-
-         <h3>1. Newton's First Law: The Law of Inertia</h3>
-         <blockquote>
-             <strong>"An object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force."</strong>
-         </blockquote>
-         <p>
-             This means things keep doing what they're doing unless something pushes or pulls them. A planet moving through space would continue in a straight line forever if no force acted on it.
-         </p>
- 
-         <h3>2. Newton's Second Law: Force and Acceleration</h3>
-         <blockquote>
-             <strong>"The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass." (<code>F = ma</code>)</strong>
-         </blockquote>
-         <p>
-             This law quantifies how forces change motion. A force causes an object to accelerate (change its speed or direction). The bigger the force, the greater the acceleration. The more massive the object, the less it accelerates for the same force. Gravity is the force that constantly accelerates planets, changing their direction.
-         </p>
- 
-         <h3>3. Newton's Third Law: Action and Reaction</h3>
-         <blockquote>
-             <strong>"For every action, there is an equal and opposite reaction."</strong>
-         </blockquote>
-         <p>
-             When one object exerts a force on a second object, the second object exerts an equal and opposite force back on the first. The Sun pulls on the Earth with gravity, and the Earth pulls back on the Sun with the *exact same* gravitational force (though the Sun's huge mass means its acceleration is tiny).
-         </p>
-
+         <p>Albert Einstein's General Relativity (1915) provides a more complete description, especially for strong gravity, but Newton's laws are foundational and highly accurate for most orbital mechanics.</p>
 
         <h2>Predicting Orbits with Newton's Laws</h2>
-
-        <p>So, how exactly do Newton's laws explain orbits, building on the historical context?</p>
+        <p>How Newton's laws explain orbits:</p>
         <ul>
-            <li><strong>Inertia (Law 1):</strong> A planet has inertia; it *wants* to keep moving in a straight line tangent to its path.</li>
-            <li><strong>Gravity (Universal Gravitation):</strong> The Sun (or star) exerts a continuous gravitational force on the planet, pulling it inwards towards the star. This force follows Newton's inverse square law: <code>F = G * (m1 * m2) / r^2</code>.</li>
-            <li><strong>Acceleration (Law 2):</strong> This gravitational force is the unbalanced, *centripetal* (center-seeking) force acting on the planet. According to <code>F=ma</code>, this force causes the planet to constantly accelerate towards the star. This acceleration continuously changes the *direction* of the planet's velocity vector, bending its path away from a straight line.</li>
-            <li><strong>The Resulting Orbit:</strong> The constant interplay between the planet's inertia (trying to go straight) and the gravitational pull (constantly redirecting it inwards) results in a stable, curved path – the orbit. As Kepler discovered and Newton explained, this path is typically an ellipse.</li>
+            <li><strong>Inertia (Law 1):</strong> Planet tries to move straight.</li>
+            <li><strong>Gravity (Universal Gravitation):</strong> Star pulls planet inwards (<code>F = G * m1 * m2 / r²</code>).</li>
+            <li><strong>Acceleration (Law 2):</strong> Gravity causes inward acceleration (<code>a = F/m</code>), constantly changing the planet's direction.</li>
+            <li><strong>Resulting Orbit:</strong> The balance between inertia and gravity creates the elliptical path.</li>
         </ul>
 
         <h2>Orbital Simulation</h2>
-        <p>This simulation visually demonstrates the process described above. It iteratively applies Newton's laws:</p>
+        <p>This simulation applies Newton's laws iteratively:</p>
         <ol>
-            <li>Calculate the gravitational force based on Newton's Universal Gravitation.</li>
-            <li>Use Newton's Second Law (<code>a = F / m</code>) to find the planet's acceleration towards the star.</li>
-            <li>Update the planet's velocity by adding the effect of this acceleration over a small time step.</li>
-            <li>Update the planet's position based on its new velocity over the time step.</li>
-            <li>Repeat, tracing the path which emerges from these simple rules.</li>
+            <li>Calculate gravitational force (Newton's Gravitation).</li>
+            <li>Calculate acceleration (<code>a = F / m</code>, Newton's 2nd Law).</li>
+            <li>Update velocity over a time step.</li>
+            <li>Update position over a time step.</li>
+            <li>Repeat, tracing the emergent path.</li>
         </ol>
-        <p>Adjust the parameters to see how changing initial conditions or the strength of gravity (simulated <code>G</code>) affects the resulting orbit, illustrating the principles discovered by Kepler and explained by Newton.</p>
+        <p>Adjust parameters to see their effect on the orbit.</p>
 
         <div id="simulation-container">
             <canvas id="orbitCanvas" width="500" height="400"></canvas>
@@ -370,13 +198,12 @@
                 </div>
                 <button id="resetButton">Reset Simulation</button>
             </div>
-             <p style="font-size: 0.8em; margin-top: 15px; color: var(--label-color);">Note: The simulation uses simplified units and a fixed star. 'Planet Mass Factor' inversely scales acceleration (<code>a = F/m</code>).</p>
+             <p style="font-size: 0.8em; margin-top: 15px; color: var(--label-color);">Note: Simplified units, fixed star. 'Planet Mass Factor' inversely scales acceleration.</p>
         </div>
-
     </div>
 
     <script>
-        // Simulation Script (mostly unchanged, but uses CSS var for path)
+        // --- Simulation Script ---
         const canvas = document.getElementById('orbitCanvas');
         const ctx = canvas.getContext('2d');
         const controls = {
@@ -389,154 +216,181 @@
             massValue: document.getElementById('massValue')
         };
 
-        let G = 1; // Gravitational constant factor
+        let G = 1;
         let initialSpeed = 1.5;
-        let planetMassFactor = 1; // Relative mass for acceleration calc
+        let planetMassFactor = 1;
 
-        let star = {
+        const star = {
             x: canvas.width / 2,
             y: canvas.height / 2,
-            mass: 1000, // Much larger mass for the star
+            mass: 1000,
             radius: 15,
-            color: 'yellow' // Keep star yellow
+            color: 'yellow'
         };
 
-        let planet = {}; // Will be initialized in resetSimulation
-        let path = []; // To store previous positions
-        const MAX_PATH_LENGTH = 500; // Limit path length for performance
-        let animationFrameId;
+        let planet = {};
+        let path = [];
+        const MAX_PATH_LENGTH = 500;
+        let animationFrameId = null; // Holds the request ID, initially null
 
-        // Function to get the current path color from CSS variables
         function getPathColor() {
-            // Get the computed style of the body (or any element) to read the variable
-            return getComputedStyle(document.body).getPropertyValue('--path-color').trim() || 'rgba(255, 255, 255, 0.5)'; // Fallback
+            return getComputedStyle(document.body).getPropertyValue('--path-color').trim() || 'rgba(255, 255, 255, 0.5)';
+        }
+
+        // Function to STOP the animation loop
+        function stopAnimation() {
+            if (animationFrameId !== null) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null; // Mark as stopped
+                console.log("Animation stopped.");
+            }
         }
 
         function resetSimulation() {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-            }
+            console.log("Resetting simulation...");
+            // 1. Stop any existing animation loop
+            stopAnimation();
 
+            // 2. Read current slider values
             G = parseFloat(controls.gravitySlider.value);
             initialSpeed = parseFloat(controls.speedSlider.value);
             planetMassFactor = parseFloat(controls.massSlider.value);
 
+            // Update displayed values
             controls.gravityValue.textContent = G.toFixed(1);
             controls.speedValue.textContent = initialSpeed.toFixed(1);
             controls.massValue.textContent = planetMassFactor.toFixed(1);
 
+            // 3. Reset planet state
             planet = {
                 x: canvas.width / 2,
-                y: canvas.height / 2 - 100, // Start above the star
-                vx: initialSpeed, // Initial velocity to the right
+                y: canvas.height / 2 - 100,
+                vx: initialSpeed,
                 vy: 0,
-                mass: planetMassFactor, // Store the factor
+                mass: planetMassFactor,
                 radius: 5,
-                color: 'lightblue' // Keep planet lightblue (visible on black)
+                color: 'lightblue'
             };
-            path = []; // Clear the path
+            path = [];
 
-            animate();
+            // 4. Clear the canvas immediately for visual feedback
+            draw(); // Draw the initial state (star and planet at start pos)
+
+            // 5. Start the animation loop by calling animate() ONCE
+            console.log("Starting animation loop...");
+            animate(); // This kicks off the loop
         }
 
         function draw() {
+             // Check if context exists
+             if (!ctx) {
+                console.error("Canvas context not found!");
+                return;
+             }
              ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw Star
-            ctx.fillStyle = star.color;
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Draw Path - Get color dynamically
-            ctx.strokeStyle = getPathColor(); // Use variable color
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            if (path.length > 1) { // Need at least 2 points to draw a line
-                ctx.moveTo(path[0].x, path[0].y);
-                for (let i = 1; i < path.length; i++) {
-                    ctx.lineTo(path[i].x, path[i].y);
-                }
-                ctx.stroke();
-            }
-
-             // Draw Planet
-            ctx.fillStyle = planet.color;
-            ctx.beginPath();
-            ctx.arc(planet.x, planet.y, planet.radius, 0, Math.PI * 2);
-            ctx.fill();
+             // Draw Star
+             ctx.fillStyle = star.color;
+             ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill();
+             // Draw Path
+             ctx.strokeStyle = getPathColor();
+             ctx.lineWidth = 1;
+             ctx.beginPath();
+             if (path.length > 1) {
+                 ctx.moveTo(path[0].x, path[0].y);
+                 for (let i = 1; i < path.length; i++) { ctx.lineTo(path[i].x, path[i].y); }
+                 ctx.stroke();
+             }
+             // Draw Planet (only if it's defined and has coordinates)
+             if (planet && typeof planet.x !== 'undefined') {
+                ctx.fillStyle = planet.color;
+                ctx.beginPath(); ctx.arc(planet.x, planet.y, planet.radius, 0, Math.PI * 2); ctx.fill();
+             } else {
+                 // console.log("Draw called but planet not fully defined yet.");
+             }
         }
 
         function update() {
+             // Safety check: Only run if animation is supposed to be running
+             // and planet is initialized.
+             if (animationFrameId === null || !planet || typeof planet.x === 'undefined') {
+                // console.log("Update skipped: animationFrameId=", animationFrameId, " planet=", planet);
+                return;
+             }
+
             const dx = star.x - planet.x;
             const dy = star.y - planet.y;
             const distSq = dx * dx + dy * dy;
+
+             // Prevent division by zero or extreme values if distance is very small
+             if (distSq < 1) { // Use distSq to avoid sqrt initially
+                 console.warn("Planet too close to star center, stopping update for safety.");
+                 stopAnimation();
+                 return;
+             }
             const dist = Math.sqrt(distSq);
 
-            // Avoid division by zero or extreme forces if too close
-            // Make collision slightly larger than visual radius for stability
+
+            // Collision Check
             if (dist < star.radius + planet.radius + 1) {
-                 console.log("Collision or too close!");
-                 // Stop animation completely on collision for simplicity
-                 if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId);
-                    animationFrameId = null; // Prevent further calls
-                 }
-                 return; // Stop updating
+                 console.log("Collision detected!");
+                 stopAnimation(); // Stop the loop
+                 return; // Stop update processing for this frame
             }
 
-            // Simplified force magnitude (proportional to G*M_star / r^2)
-            const forceMagnitude = (G * star.mass) / distSq;
-
-            // Acceleration components (a = F/m_planet). F is calculated above.
-            // We use planet.mass (which is the massFactor) to scale acceleration inversely.
+            // Calculate forces and update state (using current G and planet.mass)
+            // Add small epsilon to distSq to avoid potential division by zero in edge cases
+            const forceMagnitude = (G * star.mass) / (distSq + 1e-6);
             const ax = (forceMagnitude * dx / dist) / planet.mass;
             const ay = (forceMagnitude * dy / dist) / planet.mass;
-
-
-            // Update velocity (using a fixed time step dt=1 for simplicity)
             planet.vx += ax;
             planet.vy += ay;
-
-            // Update position
             planet.x += planet.vx;
             planet.y += planet.vy;
 
-            // Add current position to path
+            // Update path
             path.push({ x: planet.x, y: planet.y });
-            if (path.length > MAX_PATH_LENGTH) {
-                path.shift(); // Remove the oldest point
-            }
+            if (path.length > MAX_PATH_LENGTH) { path.shift(); }
         }
 
+        // *** CORRECTED Animate Function ***
         function animate() {
+            // Perform updates
             update();
-            draw(); // Draw will now use the theme-appropriate path color
-            if (animationFrameId !== null) { // Check if animation was stopped (e.g., by collision)
-               animationFrameId = requestAnimationFrame(animate);
-            }
+
+            // Draw the current state
+            draw();
+
+            // Schedule the *next* frame unconditionally.
+            // If update() called stopAnimation(), this ID will be immediately cancelled,
+            // or if resetSimulation() is called, it will cancel this pending ID.
+            animationFrameId = requestAnimationFrame(animate);
         }
 
-        // Event Listeners for controls (No reset on input change, only on button)
+        // --- Event Listeners ---
         controls.gravitySlider.addEventListener('input', () => {
-             G = parseFloat(controls.gravitySlider.value); // Update G dynamically
+             G = parseFloat(controls.gravitySlider.value);
              controls.gravityValue.textContent = G.toFixed(1);
-             // Note: Simulation adapts to new G without full reset now
         });
         controls.speedSlider.addEventListener('input', () => {
-            // Note: Changing initial speed mid-simulation doesn't make physical sense
-            // So we only update the display; Reset button applies the new value.
+            // Only update display; new speed only applies on RESET
             controls.speedValue.textContent = parseFloat(controls.speedSlider.value).toFixed(1);
         });
          controls.massSlider.addEventListener('input', () => {
-             planet.mass = parseFloat(controls.massSlider.value); // Update planet mass factor dynamically
-             controls.massValue.textContent = planet.mass.toFixed(1);
-             // Note: Simulation adapts to new mass factor without full reset
-        });
+             let newMass = parseFloat(controls.massSlider.value);
+             controls.massValue.textContent = newMass.toFixed(1);
+             // Safely update planet mass only if planet object exists
+             if (planet && typeof planet.mass !== 'undefined') {
+                 planet.mass = newMass;
+             }
+         });
         controls.resetButton.addEventListener('click', resetSimulation);
 
-        // Initial setup
-        resetSimulation();
+        // --- Initial Setup ---
+        // Ensure DOM is ready before trying to draw or start simulation
+        document.addEventListener('DOMContentLoaded', (event) => {
+            console.log("DOM fully loaded and parsed");
+            resetSimulation(); // Start the simulation once DOM is ready
+        });
 
     </script>
 
