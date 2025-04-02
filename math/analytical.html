@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytical Expressions Tutorial</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        :root {
+            --bg-color: #ffffff;
+            /* Light mode defaults */
+            --text-color: #000000;
+            --square-border: #eee;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121212;
+                /* Dark mode colors */
+                --text-color: #ffffff;
+                --square-border: #333;
+            }
+        }
+
+        #simulation-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #pattern-container {
+            display: flex;
+            margin-bottom: 20px;
+            justify-content: space-around;
+            /* Evenly space steps horizontally */
+        }
+
+        .step {
+            display: flex;
+            /* Use flexbox for horizontal arrangement */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            /* Horizontal spacing between steps */
+            position: relative;
+        }
+
+        .grid-container {
+            display: grid;
+            gap: 2px;
+            /* Adjust as needed */
+        }
+
+        .square {
+            width: 30px;
+            height: 30px;
+            box-sizing: border-box;
+            border: 1px solid var(--square-border);
+        }
+
+        .pink {
+            background-color: lightpink;
+        }
+
+        .lightblue {
+            background-color: lightblue;
+        }
+
+        .green {
+            background-color: lightgreen;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+        }
+
+        .analytical-solution {
+            margin-top: 5px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* Forcing light pink and light blue colors, instead of changing */
+        .pink {
+            background-color: lightpink;
+            /* Ensure the pink color is visible in both light and dark modes */
+        }
+
+        .lightblue {
+            background-color: lightblue;
+            /* Ensure the lightblue color is visible in both light and dark modes */
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Analytical Expressions: A Tutorial</h1>
+
+    <section id="introduction">
+        <h2>What are Analytical Expressions?</h2>
+        <p>An analytical expression (or analytical solution) is a mathematical formula that provides a direct way to calculate a result. Unlike numerical methods that approximate solutions, analytical expressions give exact answers (assuming the expression is correct).</p>
+        <p>This tutorial will explore how to derive analytical expressions from observed patterns. We'll use a simple simulation to generate patterns and find the formulas that describe them.</p>
+    </section>
+
+    <section id="simulation">
+        <h2>Linear Growth Simulation</h2>
+
+        <div id="simulation-container">
+            <div id="pattern-container">
+                <!-- JavaScript will generate the steps here -->
+            </div>
+
+            <div id="expression-container">
+                <p><strong>Analytical Expression:</strong> <span id="expression">1 + 4n</span></p>
+                <p><strong>Number of Squares in Step n:</strong> <span id="squareCount">1</span></p>
+                <p><strong>Step (n):</strong> <span id="stepNumber">0</span></p>
+                <button id="addStep">Add Step</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const patternContainer = document.getElementById('pattern-container');
+        const expressionSpan = document.getElementById('expression');
+        const squareCountSpan = document.getElementById('squareCount');
+        const stepNumberSpan = document.getElementById('stepNumber');
+        const addStepButton = document.getElementById('addStep');
+
+        let stepCount = 0;
+
+        function createStep(stepNumber) {
+            const stepDiv = document.createElement('div');
+            stepDiv.classList.add('step');
+
+            const stepNumberLabel = document.createElement('div');
+            stepNumberLabel.classList.add('step-number');
+            stepNumberLabel.textContent = stepNumber;
+            stepDiv.appendChild(stepNumberLabel);
+
+            const gridContainer = document.createElement('div');
+            gridContainer.classList.add('grid-container');
+            stepDiv.appendChild(gridContainer);
+
+            // Calculate grid size
+            const gridSize = 2 * stepNumber + 1; // Ensure odd number for center
+            gridContainer.style.gridTemplateColumns = `repeat(${gridSize}, 30px)`;
+            gridContainer.style.gridTemplateRows = `repeat(${gridSize}, 30px)`;
+
+            // Create empty grid
+            const grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
+
+            // Place Pink Square in the center
+            const centerIndex = Math.floor(gridSize / 2);
+            const pinkSquare = document.createElement('div');
+            pinkSquare.classList.add('square', 'pink');
+            gridContainer.appendChild(pinkSquare);
+            pinkSquare.style.gridColumnStart = centerIndex + 1;
+            pinkSquare.style.gridRowStart = centerIndex + 1;
+            grid[centerIndex][centerIndex] = pinkSquare; // Mark as occupied
+
+            // Place squares for previous steps and current step
+            for (let i = 0; i <= stepNumber; i++) {
+                const colorClass = (i === stepNumber) ? 'lightblue' : 'green'; // Use lightblue for current, green for previous
+
+                if (i > 0) { // Start adding 4 squares from step 1 onwards
+                    const offset = i;
+                    // Coordinates of squares to place:
+                    const positions = [
+                        {
+                            row: centerIndex - offset,
+                            col: centerIndex - offset
+                        }, // Top-left
+                        {
+                            row: centerIndex - offset,
+                            col: centerIndex + offset
+                        }, // Top-right
+                        {
+                            row: centerIndex + offset,
+                            col: centerIndex - offset
+                        }, // Bottom-left
+                        {
+                            row: centerIndex + offset,
+                            col: centerIndex + offset
+                        } // Bottom-right
+                    ];
+
+                    for (const pos of positions) {
+                        const square = document.createElement('div');
+                        square.classList.add('square', colorClass);
+                        gridContainer.appendChild(square);
+                        square.style.gridColumnStart = pos.col + 1;
+                        square.style.gridRowStart = pos.row + 1;
+                        grid[pos.row][pos.col] = square; // Mark as occupied
+                    }
+                }
+            }
+
+            // Analytical Solution Text
+            const analyticalSolutionText = document.createElement('div');
+            analyticalSolutionText.classList.add('analytical-solution');
+            analyticalSolutionText.textContent = `1 + (4 x ${stepNumber}) = ${1 + (4 * stepNumber)}`;  // Display the solution for each step
+            stepDiv.appendChild(analyticalSolutionText);
+
+            return stepDiv;
+        }
+
+        function addStep() {
+            const stepDiv = createStep(stepCount);
+            patternContainer.appendChild(stepDiv);
+            updateDisplay();
+            stepCount++;
+        }
+
+        function updateDisplay() {
+            stepNumberSpan.textContent = stepCount;
+            squareCountSpan.textContent = 1 + (4 * stepCount);
+        }
+
+        addStepButton.addEventListener('click', addStep);
+        addStep();
+    </script>
+</body>
+
+</html>
