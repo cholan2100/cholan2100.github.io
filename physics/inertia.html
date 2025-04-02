@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inertia Simulations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/Lucide.css">
+    <style>
+        /* Use Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Ensure canvas is responsive and centered */
+        canvas {
+            display: block;
+            margin: 1rem auto;
+            /* Light mode canvas defaults */
+            background-color: #f3f4f6; /* gray-100 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #d1d5db; /* gray-300 */
+            max-width: 100%;
+            cursor: default; /* Default cursor for canvas */
+        }
+        /* Dark mode canvas overrides */
+        @media (prefers-color-scheme: dark) {
+            canvas {
+                background-color: #374151; /* gray-700 */
+                border-color: #4b5563; /* gray-600 */
+            }
+        }
+        /* Style buttons */
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            border: none;
+            border-radius: 0.5rem; /* rounded-lg */
+            font-weight: 600; /* font-semibold */
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            margin: 0.25rem 0.5rem; /* Add space between buttons, allow wrapping */
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+        .action-button:hover:not(:disabled) {
+            background-color: #2563eb; /* blue-600 */
+        }
+        .action-button:disabled {
+            background-color: #9ca3af; /* gray-400 light mode */
+            cursor: not-allowed;
+        }
+         /* Dark mode disabled button override */
+        @media (prefers-color-scheme: dark) {
+            .action-button:disabled {
+                background-color: #4b5563; /* gray-600 dark mode */
+                color: #9ca3af; /* Slightly lighter text for contrast */
+            }
+        }
+        /* Specific button colors */
+        .reset-button { background-color: #ef4444; /* red-500 */ }
+        .reset-button:hover:not(:disabled) { background-color: #dc2626; /* red-600 */ }
+        .start-button { background-color: #22c55e; /* green-500 */ }
+        .start-button:hover:not(:disabled) { background-color: #16a34a; /* green-600 */ }
+        .friction-button-off { background-color: #f97316; /* orange-500 */ }
+        .friction-button-off:hover:not(:disabled) { background-color: #ea580c; /* orange-600 */ }
+        .friction-button-on { background-color: #e11d48; /* rose-600 */ color: #fef2f2; /* rose-50 */ }
+        .friction-button-on:hover:not(:disabled) { background-color: #be123c; /* rose-700 */ }
+
+        /* Lucide icon style */
+        .lucide {
+            width: 1.25em;
+            height: 1.25em;
+            margin-right: 0.5em;
+            stroke-width: 2;
+        }
+        /* Simple message box style */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.75); /* Darkish background */
+            color: white; /* Light text */
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        /* Add margin between simulation sections */
+        .simulation-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            /* Light mode border */
+            border-bottom: 1px solid #e5e7eb; /* gray-200 */
+        }
+        /* Dark mode border override */
+        @media (prefers-color-scheme: dark) {
+            .simulation-section {
+                border-color: #374151; /* gray-700 */
+            }
+        }
+        .simulation-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        /* Flex wrap for buttons on smaller screens */
+        .button-container {
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             flex-wrap: wrap; /* Allow buttons to wrap */
+             margin-top: 1rem;
+             margin-bottom: 1rem;
+        }
+
+    </style>
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+</head>
+<!-- Added dark mode classes to body -->
+<body class="bg-gray-50 dark:bg-gray-900 flex flex-col items-center min-h-screen p-4">
+
+    <!-- Added dark mode classes to main container -->
+    <div class="w-full max-w-3xl bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-xl text-center">
+
+        <!-- Sim 1 -->
+        <div class="simulation-section dark:border-gray-700">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">Inertia: Object at Rest</h1>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">
+                Inertia resists changes in motion. <strong>Newton's First Law</strong> states an object at rest stays at rest unless an external force acts on it. This box won't move until you apply force.
+            </p>
+            <canvas id="inertiaCanvas1" width="500" height="150"></canvas>
+            <div class="button-container">
+                <button id="applyForceBtn1" class="action-button">
+                    <i class="lucide lucide-move-right"></i> Apply Force
+                </button>
+                <button id="resetBtn1" class="action-button reset-button">
+                    <i class="lucide lucide-rotate-ccw"></i> Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Sim 2 -->
+        <div class="simulation-section dark:border-gray-700">
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Inertia: The Tablecloth Trick</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">
+                An object at rest tries to stay at rest. If the surface below moves quickly, friction acts for too short a time to overcome inertia. The block stays put horizontally as the "tablecloth" is pulled away.
+            </p>
+            <canvas id="inertiaCanvas2" width="500" height="200"></canvas>
+            <div class="button-container">
+                <button id="pullTableclothBtn" class="action-button start-button">
+                    <i class="lucide lucide-zap"></i> Pull Tablecloth
+                </button>
+                <button id="resetBtn2" class="action-button reset-button">
+                    <i class="lucide lucide-rotate-ccw"></i> Reset
+                </button>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">
+                Try the same at your home with a paper and coin, by sliding the paper quickly. The coin will stay on the paper for a short time, but will fall off if you pull the paper too fast.
+            </p>
+        </div>
+
+        <!-- Sim 3 -->
+        <div class="simulation-section dark:border-gray-700">
+             <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Inertia: Object in Motion</h2>
+             <p class="text-gray-600 dark:text-gray-300 mb-6">
+                 The second part of <strong>Newton's First Law</strong>: An object in motion stays in motion with constant velocity (speed and direction) unless acted upon by an external force. This wheel will keep spinning until friction (an external force) is applied to slow it down. Watch the friction bar turn from blue (cold) to red (hot)!
+             </p>
+             <canvas id="inertiaCanvas3" width="500" height="250"></canvas>
+             <div class="button-container">
+                 <button id="startSpinBtn" class="action-button start-button">
+                     <i class="lucide lucide-play"></i> Start Spin
+                 </button>
+                 <button id="applyFrictionBtn" class="action-button friction-button-off" disabled>
+                     <i class="lucide lucide-hand-metal"></i> Apply Friction
+                 </button>
+                 <button id="resetBtn3" class="action-button reset-button">
+                     <i class="lucide lucide-rotate-ccw"></i> Reset
+                 </button>
+             </div>
+        </div>
+
+    </div>
+
+    <div id="messageBox" class="message-box">Message goes here</div>
+
+    <script>
+        // --- Shared Utilities ---
+        const messageBox = document.getElementById('messageBox');
+        function showMessage(message, duration = 2000) {
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            if (messageBox.timeoutId) clearTimeout(messageBox.timeoutId);
+            messageBox.timeoutId = setTimeout(() => { messageBox.style.display = 'none'; }, duration);
+        }
+
+        // --- Theme Check Utility ---
+        const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        // --- Simulation 1: Object at Rest ---
+        const canvas1 = document.getElementById('inertiaCanvas1');
+        const ctx1 = canvas1.getContext('2d');
+        const applyForceBtn1 = document.getElementById('applyForceBtn1');
+        const resetBtn1 = document.getElementById('resetBtn1');
+        // Sim 1 Colors (Could also be made theme-aware if needed)
+        const BOX1_COLOR = '#3b82f6'; // blue-500
+        const BOX1_BORDER_COLOR = '#1e40af'; // blue-800
+        let box1 = { x: 0, y: 0, width: 40, height: 40, color: BOX1_COLOR, vx: 0, forceApplied: false };
+        let animFrame1;
+
+        function drawSim1() {
+            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+            ctx1.fillStyle = box1.color; // Using defined color
+            ctx1.fillRect(box1.x, box1.y, box1.width, box1.height);
+            ctx1.strokeStyle = BOX1_BORDER_COLOR; // Using defined color
+            ctx1.lineWidth = 2;
+            ctx1.strokeRect(box1.x, box1.y, box1.width, box1.height);
+        }
+        function updateSim1() {
+            box1.x += box1.vx;
+            if (box1.x + box1.width > canvas1.width || box1.x < 0) {
+                box1.vx = 0;
+                box1.x = Math.max(0, Math.min(canvas1.width - box1.width, box1.x));
+                applyForceBtn1.disabled = true;
+            }
+        }
+        function animateSim1() {
+            updateSim1();
+            drawSim1();
+            animFrame1 = requestAnimationFrame(animateSim1);
+        }
+        function resetSim1() {
+            box1.x = (canvas1.width - box1.width) / 2;
+            box1.y = (canvas1.height - box1.height) / 2;
+            box1.vx = 0;
+            box1.forceApplied = false;
+            applyForceBtn1.disabled = false;
+            drawSim1();
+        }
+        function resizeCanvas1() {
+            const parentWidth = canvas1.parentElement.clientWidth - 32;
+            const aspectRatio = 500 / 150;
+            canvas1.width = Math.min(parentWidth, 500);
+            canvas1.height = canvas1.width / aspectRatio;
+            if (!box1.forceApplied) resetSim1();
+            else {
+                 box1.x = Math.max(0, Math.min(canvas1.width - box1.width, box1.x));
+                 box1.y = (canvas1.height - box1.height) / 2;
+                 drawSim1();
+            }
+        }
+        applyForceBtn1.addEventListener('click', () => {
+            if (!box1.forceApplied) {
+                box1.vx = 3; box1.forceApplied = true; showMessage("Force Applied (Sim 1)!");
+            } else { showMessage("Already applied. Reset Sim 1."); }
+        });
+        resetBtn1.addEventListener('click', () => { resetSim1(); showMessage("Simulation 1 Reset"); });
+
+        // --- Simulation 2: Tablecloth Pull ---
+        const canvas2 = document.getElementById('inertiaCanvas2');
+        const ctx2 = canvas2.getContext('2d');
+        const pullTableclothBtn = document.getElementById('pullTableclothBtn');
+        const resetBtn2 = document.getElementById('resetBtn2');
+        const gravity2 = 0.3; const tableclothPullSpeed = 25;
+
+        // --- Theme-aware colors for Sim 2 ---
+        const TABLECLOTH_LIGHT_COLOR = '#000000'; // Black
+        const TABLECLOTH_DARK_COLOR = '#ffffff';  // White
+        const OBJECT_ON_TABLE_COLOR = '#10b981'; // Emerald-500 (keep fixed for now)
+        const OBJECT_ON_TABLE_BORDER_COLOR = '#047857'; // Emerald-700 (keep fixed)
+        // --- End Theme-aware colors ---
+
+        let tablecloth = { x: 0, y: 0, width: 0, height: 30, color: '', vx: 0 }; // Color will be set in resetSim2
+        let objectOnTable = { x: 0, y: 0, width: 40, height: 40, color: OBJECT_ON_TABLE_COLOR, vx: 0, vy: 0, onTable: true };
+        let isPulled = false;
+        let animFrame2;
+
+        function drawSim2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            // Draw tablecloth with its current color (set by resetSim2)
+            ctx2.fillStyle = tablecloth.color;
+            ctx2.fillRect(tablecloth.x, tablecloth.y, tablecloth.width, tablecloth.height);
+            // Draw object
+            ctx2.fillStyle = objectOnTable.color;
+            ctx2.fillRect(objectOnTable.x, objectOnTable.y, objectOnTable.width, objectOnTable.height);
+            ctx2.strokeStyle = OBJECT_ON_TABLE_BORDER_COLOR;
+            ctx2.lineWidth = 2;
+            ctx2.strokeRect(objectOnTable.x, objectOnTable.y, objectOnTable.width, objectOnTable.height);
+        }
+        function updateSim2() {
+            tablecloth.x += tablecloth.vx;
+            if (isPulled && objectOnTable.onTable) {
+                 const objectCenterX = objectOnTable.x + objectOnTable.width / 2;
+                 if (objectCenterX < tablecloth.x || objectCenterX > tablecloth.x + tablecloth.width || tablecloth.x > objectOnTable.x + objectOnTable.width) {
+                     objectOnTable.onTable = false;
+                 }
+            }
+            if (!objectOnTable.onTable) {
+                objectOnTable.vy += gravity2; objectOnTable.y += objectOnTable.vy;
+            }
+            if (objectOnTable.y + objectOnTable.height > canvas2.height) {
+                objectOnTable.y = canvas2.height - objectOnTable.height; objectOnTable.vy = 0;
+                tablecloth.vx = 0; pullTableclothBtn.disabled = true;
+            }
+            if (tablecloth.x > canvas2.width) tablecloth.vx = 0;
+        }
+        function animateSim2() {
+            updateSim2();
+            drawSim2();
+            animFrame2 = requestAnimationFrame(animateSim2);
+        }
+        function resetSim2() {
+            // --- Set tablecloth color based on theme ---
+            tablecloth.color = isDarkMode() ? TABLECLOTH_DARK_COLOR : TABLECLOTH_LIGHT_COLOR;
+            // --- End Set tablecloth color ---
+
+            tablecloth.width = canvas2.width * 0.8; tablecloth.x = (canvas2.width - tablecloth.width) / 2;
+            tablecloth.y = canvas2.height * 0.6; tablecloth.vx = 0;
+            objectOnTable.width = 40; objectOnTable.height = 40;
+            objectOnTable.x = (canvas2.width - objectOnTable.width) / 2;
+            objectOnTable.y = tablecloth.y - objectOnTable.height;
+            objectOnTable.vx = 0; objectOnTable.vy = 0; objectOnTable.onTable = true;
+            isPulled = false; pullTableclothBtn.disabled = false;
+            drawSim2();
+        }
+        function resizeCanvas2() {
+             const parentWidth = canvas2.parentElement.clientWidth - 32;
+             const aspectRatio = 500 / 200;
+             canvas2.width = Math.min(parentWidth, 500);
+             canvas2.height = canvas2.width / aspectRatio;
+             resetSim2(); // This will call resetSim2, which now sets the theme color
+        }
+        pullTableclothBtn.addEventListener('click', () => {
+             if (!isPulled) {
+                 isPulled = true; tablecloth.vx = tableclothPullSpeed; showMessage("Tablecloth Pulled!");
+             } else { showMessage("Already pulled. Reset Sim 2."); }
+        });
+        resetBtn2.addEventListener('click', () => { resetSim2(); showMessage("Simulation 2 Reset"); });
+
+
+        // --- Simulation 3: Object in Motion ---
+        const canvas3 = document.getElementById('inertiaCanvas3');
+        const ctx3 = canvas3.getContext('2d');
+        const startSpinBtn = document.getElementById('startSpinBtn');
+        const applyFrictionBtn = document.getElementById('applyFrictionBtn');
+        const resetBtn3 = document.getElementById('resetBtn3');
+
+        // Sim 3 Config
+        const wheelRadius = 80; // Base radius, might be adjusted in resize
+        const frictionBarHeight = 30;
+        const initialAngularVelocity = 0.1;
+        const naturalDeceleration = 0.0005;
+        const frictionCoefficient = 0.005;
+        const maxTemperature = 100;
+
+        // Sim 3 Colors (Could be made theme-aware too)
+        const WHEEL_COLOR = '#60a5fa'; // blue-400
+        const WHEEL_BORDER_COLOR = '#1d4ed8'; // blue-700
+        const WHEEL_SPOKE_COLOR = '#1e3a8a'; // blue-800
+        const FRICTION_BAR_STROKE_COLOR = '#1f2937'; // gray-800
+
+        let wheel = { x: 0, y: 0, radius: wheelRadius, angle: 0, angularVelocity: 0, color: WHEEL_COLOR };
+        let frictionBar = { x: 0, y: 0, width: 60, height: frictionBarHeight, color: '#3b82f6', isApplied: false, temperature: 0 }; // Color updated by temp
+        let animFrame3;
+
+        function drawSim3() {
+            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+            // Draw Friction Bar (Color changes based on temperature, not theme)
+            const tempRatio = Math.min(frictionBar.temperature / maxTemperature, 1);
+            // Blue (low temp) to Red (high temp) transition
+            const baseColor = { r: 59, g: 130, b: 246 }; // blue-500
+            const hotColor = { r: 239, g: 68, b: 68 }; // red-500
+            const red = Math.floor(baseColor.r + (hotColor.r - baseColor.r) * tempRatio);
+            const green = Math.floor(baseColor.g + (hotColor.g - baseColor.g) * tempRatio);
+            const blue = Math.floor(baseColor.b + (hotColor.b - baseColor.b) * tempRatio);
+            frictionBar.color = `rgb(${red}, ${green}, ${blue})`;
+
+            ctx3.fillStyle = frictionBar.color;
+            ctx3.fillRect(frictionBar.x, frictionBar.y, frictionBar.width, frictionBar.height);
+            ctx3.strokeStyle = FRICTION_BAR_STROKE_COLOR;
+            ctx3.lineWidth = 1;
+            ctx3.strokeRect(frictionBar.x, frictionBar.y, frictionBar.width, frictionBar.height);
+
+            // Draw Wheel
+            ctx3.save();
+            ctx3.translate(wheel.x, wheel.y);
+            ctx3.rotate(wheel.angle);
+            ctx3.beginPath();
+            ctx3.arc(0, 0, wheel.radius, 0, Math.PI * 2);
+            ctx3.fillStyle = wheel.color;
+            ctx3.fill();
+            ctx3.strokeStyle = WHEEL_BORDER_COLOR;
+            ctx3.lineWidth = 3;
+            ctx3.stroke();
+            // Spokes
+            ctx3.strokeStyle = WHEEL_SPOKE_COLOR;
+            ctx3.lineWidth = 4;
+            ctx3.beginPath();
+            ctx3.moveTo(0, 0);
+            ctx3.lineTo(wheel.radius * 0.9, 0);
+            ctx3.stroke();
+            ctx3.beginPath();
+            ctx3.moveTo(0, 0);
+            ctx3.lineTo(0, -wheel.radius * 0.9);
+            ctx3.stroke();
+            ctx3.restore();
+        }
+
+        function updateSim3() {
+            wheel.angularVelocity *= (1 - naturalDeceleration);
+
+            if (frictionBar.isApplied && wheel.angularVelocity > 0) {
+                const deceleration = wheel.angularVelocity * frictionCoefficient;
+                wheel.angularVelocity -= deceleration;
+                frictionBar.temperature = Math.min(maxTemperature, frictionBar.temperature + deceleration * 5000);
+            } else {
+                 frictionBar.temperature *= 0.95; // Cool down
+                 if (frictionBar.temperature < 1) frictionBar.temperature = 0;
+            }
+
+            if (wheel.angularVelocity < 0.001) {
+                wheel.angularVelocity = 0;
+                if(startSpinBtn.disabled) { // Only change button state if sim was running
+                     applyFrictionBtn.disabled = true;
+                     startSpinBtn.disabled = false;
+                     if (frictionBar.isApplied) {
+                         toggleFriction(true); // Silently reset friction button state
+                     }
+                }
+            }
+
+            wheel.angle += wheel.angularVelocity;
+            wheel.angle %= (Math.PI * 2);
+        }
+
+        function animateSim3() {
+            updateSim3();
+            drawSim3();
+            animFrame3 = requestAnimationFrame(animateSim3);
+        }
+
+        function toggleFriction(silent = false) {
+            frictionBar.isApplied = !frictionBar.isApplied;
+            if (frictionBar.isApplied) {
+                applyFrictionBtn.textContent = 'Release Friction';
+                 applyFrictionBtn.classList.remove('friction-button-off');
+                 applyFrictionBtn.classList.add('friction-button-on');
+                if (!silent) showMessage("Friction Applied!");
+            } else {
+                applyFrictionBtn.innerHTML = '<i class="lucide lucide-hand-metal"></i> Apply Friction';
+                applyFrictionBtn.classList.remove('friction-button-on');
+                applyFrictionBtn.classList.add('friction-button-off');
+                 if (!silent) showMessage("Friction Released");
+            }
+        }
+
+        function resetSim3() {
+            wheel.x = canvas3.width / 2;
+            wheel.y = canvas3.height / 2 - frictionBarHeight / 2 - 5; // Center wheel above bar slightly
+            wheel.angle = 0;
+            wheel.angularVelocity = 0;
+            // Recalculate radius based on current canvas size during reset
+            const availableHeight = canvas3.height - frictionBarHeight - 30; // Adjusted space
+            const availableWidth = canvas3.width - 20;
+            wheel.radius = Math.min(wheelRadius, availableHeight / 2, availableWidth / 2) * 0.95; // Make slightly larger %
+
+            frictionBar.width = wheel.radius * 0.8; // Make bar size relative to wheel
+            frictionBar.x = canvas3.width / 2 - frictionBar.width / 2;
+            frictionBar.y = wheel.y + wheel.radius + 5; // Position below wheel
+
+            // Reset friction state
+            if (frictionBar.isApplied) {
+                toggleFriction(true); // Reset internal state silently
+            }
+            frictionBar.temperature = 0;
+            startSpinBtn.disabled = false;
+            applyFrictionBtn.disabled = true;
+            applyFrictionBtn.innerHTML = '<i class="lucide lucide-hand-metal"></i> Apply Friction';
+            applyFrictionBtn.classList.remove('friction-button-on');
+            applyFrictionBtn.classList.add('friction-button-off');
+            drawSim3();
+        }
+
+         function resizeCanvas3() {
+             const parentWidth = canvas3.parentElement.clientWidth - 32;
+             const aspectRatio = 500 / 250;
+             canvas3.width = Math.min(parentWidth, 500);
+             canvas3.height = canvas3.width / aspectRatio;
+             resetSim3(); // Calls reset which now handles radius and positioning based on new size
+        }
+
+        startSpinBtn.addEventListener('click', () => {
+            if (wheel.angularVelocity === 0) {
+                wheel.angularVelocity = initialAngularVelocity;
+                startSpinBtn.disabled = true;
+                applyFrictionBtn.disabled = false;
+                showMessage("Wheel Spinning!");
+            }
+        });
+
+        applyFrictionBtn.addEventListener('click', () => {
+            if (wheel.angularVelocity > 0 || frictionBar.isApplied) {
+                 toggleFriction();
+            } else {
+                showMessage("Wheel is not spinning.");
+            }
+        });
+
+        resetBtn3.addEventListener('click', () => {
+            resetSim3();
+            showMessage("Simulation 3 Reset");
+        });
+
+
+        // --- Initial Setup ---
+        window.addEventListener('resize', () => {
+            resizeCanvas1();
+            resizeCanvas2();
+            resizeCanvas3();
+        });
+
+        window.onload = () => {
+            resizeCanvas1(); resizeCanvas2(); resizeCanvas3(); // Initial setup including theme color check via resetSim2
+            if (animFrame1) cancelAnimationFrame(animFrame1);
+            if (animFrame2) cancelAnimationFrame(animFrame2);
+            if (animFrame3) cancelAnimationFrame(animFrame3);
+            animateSim1(); animateSim2(); animateSim3();
+        };
+
+    </script>
+
+</body>
+</html>
