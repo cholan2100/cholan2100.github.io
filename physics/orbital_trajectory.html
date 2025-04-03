@@ -9,7 +9,7 @@
         /* Use Inter font */
         body {
             font-family: 'Inter', sans-serif;
-            overflow: hidden; /* Prevent scrolling */
+            /* Removed overflow: hidden to allow scrolling */
         }
         /* Style canvas */
         canvas {
@@ -17,36 +17,47 @@
             background-color: #00001a; /* Dark space background - stays dark */
             border-radius: 0.5rem; /* Rounded corners */
             border: 1px solid #4a5568; /* Add a subtle border */
+            max-width: 100%;
+            max-height: 100%;
         }
-        /* Ensure layout fits screen */
+        /* Ensure layout fits screen height initially */
         html, body {
             height: 100%;
             margin: 0;
         }
-        /* Center content */
+        /* Main container setup */
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100%;
+            min-height: 100vh; /* Use min-height to allow content to expand */
+            /* Removed fixed height: 100vh */
             padding: 1rem;
         }
-        /* Style info box - base styles */
-        .info-box {
-            /* Light mode default */
-            background-color: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            color: #1f2937; /* Default text color (dark gray) for light mode */
+        /* Wrapper for canvas to control flex growth and centering */
+        .canvas-wrapper {
+            flex-grow: 1; /* Allow this div to take up available vertical space */
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 0;
+            min-height: 300px; /* Ensure canvas wrapper has a minimum height */
         }
-        /* Dark mode styles for info box - MODIFIED */
-        .dark .info-box {
-             background-color: #00001a; /* Match canvas background */
-             border: 1px solid #4a5568; /* Use the same border color as canvas */
-             color: #FFFFFF; /* Force all text inside to be white */
-             backdrop-filter: none; /* Remove blur effect for solid background */
+         /* Styling for the controls area below canvas */
+        .controls {
+            flex-shrink: 0; /* Prevent controls area from shrinking */
+            padding-top: 0.5rem;
+            text-align: center;
         }
+        /* Styling for the description section */
+        .description {
+            flex-shrink: 0; /* Prevent description from shrinking */
+            margin-top: 2rem; /* More space above description */
+            padding: 1rem; /* Padding inside the box */
+            border-radius: 0.5rem; /* Rounded corners */
+        }
+
     </style>
      <link rel="preconnect" href="https://fonts.googleapis.com">
      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,22 +72,34 @@
      </script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
-    <div class="container mx-auto p-4 h-screen flex flex-col items-center justify-center">
-        <h1 class="text-2xl font-bold mb-4 text-center">Earth to Mars Hohmann Transfer Simulation</h1>
+    <div class="container mx-auto">
+        <h1 class="text-2xl font-bold text-center flex-shrink-0 mb-2">Earth to Mars Hohmann Transfer Simulation</h1>
 
-        <canvas id="orbitCanvas" class="mb-4 rounded-lg shadow-lg"></canvas>
-
-        <div id="info" class="info-box p-4 rounded-lg text-center text-sm md:text-base w-full max-w-lg shadow-md">
-            <p class="font-semibold text-lg mb-2">Simulation Details</p>
-            <p>This simulation shows a simplified <strong class="font-semibold">Hohmann transfer orbit</strong>, an energy-efficient way to travel between two circular, coplanar orbits (like Earth and Mars, approximated).</p>
-            <p class="mt-1">The spacecraft follows an elliptical path that touches Earth's orbit at its start (periapsis) and Mars' orbit at its end (apoapsis). The travel time is half the orbital period of this transfer ellipse.</p>
-            <p class="mt-1"><strong>Assumptions:</strong> Circular orbits in the same plane; instantaneous speed changes.</p>
-            <p id="travelTime" class="mt-3 font-semibold">Calculating travel time...</p>
-            <p id="status" class="mt-1 text-yellow-600"></p>
-            <button id="startSimButton" class="mt-3 px-5 py-2 bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 rounded-lg text-white font-semibold shadow transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                Start Simulation
-            </button>
+        <div class="canvas-wrapper">
+            <canvas id="orbitCanvas" class="rounded-lg shadow-lg"></canvas>
         </div>
+
+        <div class="controls w-full max-w-md mx-auto">
+             <p id="travelTime" class="font-semibold text-sm md:text-base">Calculating travel time...</p>
+             <p id="status" class="mt-1 text-sm text-yellow-600 dark:text-yellow-400"></p>
+             <button id="startSimButton" class="mt-2 px-5 py-2 bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 rounded-lg text-white font-semibold shadow transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                 Start Simulation
+             </button>
+        </div>
+
+        <div class="description w-full max-w-2xl mx-auto bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm">
+            <h2 class="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Simulation Details</h2>
+            <p>This simulation shows a simplified <strong class="font-semibold text-gray-800 dark:text-gray-100">Hohmann transfer orbit</strong>, an energy-efficient way to travel between two circular, coplanar orbits (like Earth and Mars, approximated).</p>
+            <p class="mt-1">The spacecraft follows an elliptical path that touches Earth's orbit at its start (periapsis) and Mars' orbit at its end (apoapsis). The travel time is half the orbital period of this transfer ellipse.</p>
+            <p class="mt-3"><strong class="font-semibold text-gray-800 dark:text-gray-100">Assumptions:</strong></p>
+            <ul class="list-disc list-inside mt-1 space-y-1">
+                <li>Circular orbits for Earth and Mars.</li>
+                <li>Orbits are in the same plane (coplanar).</li>
+                <li>Speed changes (burns) to enter and exit the transfer orbit are instantaneous.</li>
+                <li>Gravitational effects of planets other than the Sun are ignored during the transfer.</li>
+            </ul>
+        </div>
+
         <p class="text-center text-sm text-gray-500 dark:text-gray-400">
             &copy; <span id="copyright-year"></span> NakedCircuits All rights reserved.
         </p>
@@ -85,60 +108,71 @@
     <script>
         // --- Constants and Setup ---
         const canvas = document.getElementById('orbitCanvas');
+        const canvasWrapper = canvas.parentElement; // Get the wrapper div
         const ctx = canvas.getContext('2d');
         const travelTimeElement = document.getElementById('travelTime');
         const statusElement = document.getElementById('status');
         const startButton = document.getElementById('startSimButton');
 
         // Astronomical constants
-        const AU = 1.496e11; // Astronomical Unit in meters
-        const G = 6.67430e-11; // Gravitational constant
-        const M_SUN = 1.989e30; // Mass of the Sun in kg
-        const MU_SUN = G * M_SUN; // Standard gravitational parameter of the Sun (m^3/s^2)
+        const AU = 1.496e11;
+        const G = 6.67430e-11;
+        const M_SUN = 1.989e30;
+        const MU_SUN = G * M_SUN;
 
-        // Orbital parameters (average radius, meters)
+        // Orbital parameters
         const R_EARTH = 1.0 * AU;
         const R_MARS = 1.524 * AU;
 
         // Simulation parameters
         let width, height, centerX, centerY;
-        let scaledRadiusEarth, scaledRadiusMars; // Will be set in resizeCanvas
-        let earthAngle = Math.PI; // Start Earth at a reasonable position
+        let scaledRadiusEarth, scaledRadiusMars;
+        let earthAngle = Math.PI;
         let spacecraftAngle = earthAngle;
-        let spacecraftRadius; // Will be set relative to scaled Earth radius
+        let spacecraftRadius;
         let animationFrameId = null;
         let simulationRunning = false;
-        let time = 0; // Simulation time elapsed
-        const timeStep = (24 * 3600) / 2; // Time step for animation (e.g., 0.5 day in seconds)
+        let time = 0;
+        const timeStep = (24 * 3600) / 2; // 0.5 day step
 
-        // --- NEW: Array to store spacecraft trail points ---
         let spacecraftTrail = [];
 
         // --- Hohmann Transfer Calculations ---
-        const a_hohmann = (R_EARTH + R_MARS) / 2; // Semi-major axis of transfer ellipse (m)
-        const T_hohmann = 2 * Math.PI * Math.sqrt(Math.pow(a_hohmann, 3) / MU_SUN); // Period of transfer orbit (seconds)
-        const travelTimeSeconds = T_hohmann / 2; // Time for Hohmann transfer (seconds)
-        const travelTimeDays = travelTimeSeconds / (60 * 60 * 24); // Convert to days
+        const a_hohmann = (R_EARTH + R_MARS) / 2;
+        const T_hohmann = 2 * Math.PI * Math.sqrt(Math.pow(a_hohmann, 3) / MU_SUN);
+        const travelTimeSeconds = T_hohmann / 2;
+        const travelTimeDays = travelTimeSeconds / (60 * 60 * 24);
 
-        // Display calculated travel time
-        travelTimeElement.textContent = `Approx. Hohmann Transfer Time: ${travelTimeDays.toFixed(1)} days`;
+        // Check if element exists before setting text content
+        if (travelTimeElement) {
+            travelTimeElement.textContent = `Approx. Hohmann Transfer Time: ${travelTimeDays.toFixed(1)} days`;
+        }
 
-        // Angular velocities (radians per second) - simplified circular orbits
         const omega_earth = Math.sqrt(MU_SUN / Math.pow(R_EARTH, 3));
         const omega_mars = Math.sqrt(MU_SUN / Math.pow(R_MARS, 3));
 
         // --- Canvas Drawing Functions ---
         function resizeCanvas() {
-            const container = canvas.parentElement;
-            const infoBoxHeight = document.getElementById('info').offsetHeight;
-            const availableHeight = window.innerHeight - infoBoxHeight - 100; // Subtract info box height and some padding
+             // Ensure wrapper exists
+            if (!canvasWrapper) return;
 
-            const maxWidth = container.clientWidth * 0.9;
-            const maxHeight = Math.max(200, availableHeight);
+            const wrapperWidth = canvasWrapper.clientWidth;
+            const wrapperHeight = canvasWrapper.clientHeight; // Use full clientHeight
+
+            // Check for valid dimensions
+            if (wrapperWidth <= 0 || wrapperHeight <= 0) return;
 
             const aspectRatio = 1.2;
-            width = Math.min(maxWidth, maxHeight * aspectRatio);
-            height = Math.min(maxHeight, width / aspectRatio);
+            let potentialWidth = wrapperWidth;
+            let potentialHeight = wrapperWidth / aspectRatio;
+
+            if (potentialHeight > wrapperHeight) {
+                potentialHeight = wrapperHeight;
+                potentialWidth = wrapperHeight * aspectRatio;
+            }
+
+            width = Math.max(200, Math.min(wrapperWidth, potentialWidth));
+            height = Math.max(150, Math.min(wrapperHeight, potentialHeight));
 
             canvas.width = width;
             canvas.height = height;
@@ -146,6 +180,9 @@
             centerY = height / 2;
 
             const newScale = Math.min(centerX, centerY) / (R_MARS * 1.15);
+
+            // Check if scale is valid
+            if (!isFinite(newScale) || newScale <= 0) return;
 
             scaledRadiusEarth = R_EARTH * newScale;
             scaledRadiusMars = R_MARS * newScale;
@@ -156,20 +193,19 @@
             }
 
             drawStaticElements();
-            if (!simulationRunning) {
-                drawMovingElements(0); // Draw initial positions
-                drawTrail(); // Draw trail (empty initially)
-            }
+            drawMovingElements(time);
         }
 
         function drawCircle(x, y, radius, color) {
+            if (!isFinite(x) || !isFinite(y) || !isFinite(radius)) return;
             ctx.beginPath();
-            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.arc(x, y, Math.max(0, radius), 0, 2 * Math.PI);
             ctx.fillStyle = color;
             ctx.fill();
         }
 
         function drawOrbit(radius, color) {
+            if (!isFinite(radius) || radius <= 0) return;
             ctx.beginPath();
             ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
             ctx.strokeStyle = color;
@@ -180,56 +216,66 @@
         }
 
         function drawHohmannTransfer() {
+             if (!isFinite(scaledRadiusEarth) || !isFinite(scaledRadiusMars) || scaledRadiusEarth <= 0 || scaledRadiusMars <= 0) return;
+
             const scaled_a_hohmann = (scaledRadiusEarth + scaledRadiusMars) / 2;
             const c = Math.max(0, scaled_a_hohmann - scaledRadiusEarth);
             const b_hohmann_sq = scaled_a_hohmann**2 - c**2;
             const b_hohmann = b_hohmann_sq > 0 ? Math.sqrt(b_hohmann_sq) : 0;
 
-            if (b_hohmann === 0 || scaled_a_hohmann === 0) return;
+            if (b_hohmann <= 0 || scaled_a_hohmann <= 0) return;
 
             ctx.beginPath();
             const ellipseCenterX = centerX - c;
             const ellipseCenterY = centerY;
-            ctx.ellipse(ellipseCenterX, ellipseCenterY, scaled_a_hohmann, b_hohmann, 0, 0, 2 * Math.PI);
-            ctx.strokeStyle = 'yellow';
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([8, 4]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-        }
 
-        // --- NEW: Function to draw the spacecraft trail ---
-        function drawTrail() {
-            if (spacecraftTrail.length < 2) return; // Need at least two points for a line
-
-            ctx.beginPath();
-            ctx.moveTo(spacecraftTrail[0].x, spacecraftTrail[0].y);
-            for (let i = 1; i < spacecraftTrail.length; i++) {
-                ctx.lineTo(spacecraftTrail[i].x, spacecraftTrail[i].y);
+             if (isFinite(ellipseCenterX) && isFinite(ellipseCenterY) && isFinite(scaled_a_hohmann) && isFinite(b_hohmann)) {
+                 ctx.ellipse(ellipseCenterX, ellipseCenterY, scaled_a_hohmann, b_hohmann, 0, 0, 2 * Math.PI);
+                 ctx.strokeStyle = 'yellow';
+                 ctx.lineWidth = 1.5;
+                 ctx.setLineDash([8, 4]);
+                 ctx.stroke();
+                 ctx.setLineDash([]);
             }
-            ctx.strokeStyle = 'rgba(190, 255, 190, 0.6)'; // Light lime, semi-transparent
+        }
+
+        function drawTrail() {
+            if (spacecraftTrail.length < 2) return;
+            ctx.beginPath();
+            if (isFinite(spacecraftTrail[0].x) && isFinite(spacecraftTrail[0].y)) {
+                ctx.moveTo(spacecraftTrail[0].x, spacecraftTrail[0].y);
+            } else {
+                return;
+            }
+            for (let i = 1; i < spacecraftTrail.length; i++) {
+                if (isFinite(spacecraftTrail[i].x) && isFinite(spacecraftTrail[i].y)) {
+                     ctx.lineTo(spacecraftTrail[i].x, spacecraftTrail[i].y);
+                }
+            }
+            ctx.strokeStyle = 'rgba(190, 255, 190, 0.6)';
             ctx.lineWidth = 1.5;
             ctx.stroke();
         }
 
-        // Draws elements that don't change frame-to-frame unless resized
         function drawStaticElements() {
+             // Check if context exists and canvas has dimensions
+             if (!ctx || !width || !height) return;
              ctx.clearRect(0, 0, width, height);
              drawCircle(centerX, centerY, Math.max(4, width * 0.02), 'orange'); // Sun
              drawOrbit(scaledRadiusEarth, 'rgba(0, 150, 255, 0.5)'); // Earth Orbit
              drawOrbit(scaledRadiusMars, 'rgba(255, 100, 50, 0.5)'); // Mars Orbit
-             drawHohmannTransfer(); // Hohmann path outline
+             drawHohmannTransfer();
         }
 
-        // Draws elements whose positions change over time
         function drawMovingElements(currentTime) {
-             // --- Calculate current positions ---
+             // Check dependencies
+             if (!isFinite(currentTime) || !isFinite(earthAngle) || !isFinite(omega_earth) || !isFinite(omega_mars) || !isFinite(travelTimeSeconds)) return;
+
              const currentEarthAngle = earthAngle + omega_earth * currentTime;
              const travelAngleMars = omega_mars * travelTimeSeconds;
              const initialMarsAngle = earthAngle + Math.PI - travelAngleMars;
              const currentMarsAngle = initialMarsAngle + omega_mars * currentTime;
 
-             // --- Calculate Spacecraft position ---
              const fractionOfTravel = Math.min(1.0, currentTime / travelTimeSeconds);
              let currentSpacecraftAngle = earthAngle;
              let currentSpacecraftRadius = scaledRadiusEarth;
@@ -241,136 +287,134 @@
                  const a_h = (scaledRadiusEarth + scaledRadiusMars) / 2;
                  const e = (scaledRadiusMars - scaledRadiusEarth) / (scaledRadiusMars + scaledRadiusEarth);
                  const meanAnomaly = Math.PI * fractionOfTravel;
-                 const theta = meanAnomaly; // Approximation
+                 const theta = meanAnomaly;
                  currentSpacecraftAngle = earthAngle + theta;
                  const denominator = (1 + e * Math.cos(theta));
-                 if (denominator > 1e-6) {
+
+                 if (denominator > 1e-6 && isFinite(a_h) && isFinite(e)) {
                     currentSpacecraftRadius = a_h * (1 - e * e) / denominator;
                  } else {
-                    currentSpacecraftRadius = scaledRadiusMars; // Fallback
+                    currentSpacecraftRadius = scaledRadiusMars;
                  }
-                 // Recalculate X, Y based on updated radius/angle
+                 currentSpacecraftRadius = isFinite(currentSpacecraftRadius) ? currentSpacecraftRadius : scaledRadiusMars;
+
                  spacecraftX = centerX + currentSpacecraftRadius * Math.cos(currentSpacecraftAngle);
                  spacecraftY = centerY + currentSpacecraftRadius * Math.sin(currentSpacecraftAngle);
 
-                 // --- Add current position to trail ---
-                 // Only add if simulation is running to avoid adding initial point repeatedly
-                 if (simulationRunning) {
+                 if (simulationRunning && isFinite(spacecraftX) && isFinite(spacecraftY)) {
                     spacecraftTrail.push({ x: spacecraftX, y: spacecraftY });
                  }
 
-
              } else if (currentTime > travelTimeSeconds) {
-                 // Arrived: Snap to Mars orbit at the destination angle
                  currentSpacecraftAngle = earthAngle + Math.PI;
                  currentSpacecraftRadius = scaledRadiusMars;
                  spacecraftX = centerX + currentSpacecraftRadius * Math.cos(currentSpacecraftAngle);
                  spacecraftY = centerY + currentSpacecraftRadius * Math.sin(currentSpacecraftAngle);
-                 // Add the final point to the trail if it just arrived
-                 if (simulationRunning && spacecraftTrail.length > 0 && (spacecraftTrail[spacecraftTrail.length - 1].x !== spacecraftX || spacecraftTrail[spacecraftTrail.length - 1].y !== spacecraftY)) {
-                     spacecraftTrail.push({ x: spacecraftX, y: spacecraftY });
+
+                 if (simulationRunning && spacecraftTrail.length > 0 && isFinite(spacecraftX) && isFinite(spacecraftY)) {
+                     const lastPoint = spacecraftTrail[spacecraftTrail.length - 1];
+                     if (isFinite(lastPoint?.x) && isFinite(lastPoint?.y) && (lastPoint.x !== spacecraftX || lastPoint.y !== spacecraftY)) {
+                         spacecraftTrail.push({ x: spacecraftX, y: spacecraftY });
+                     }
                  }
              }
 
-             // Update global spacecraft variables if simulation is running
              if(simulationRunning){
                 spacecraftAngle = currentSpacecraftAngle;
                 spacecraftRadius = currentSpacecraftRadius;
              }
 
-             // --- Draw Trail (Draw first so planets/craft are on top) ---
              drawTrail();
 
-             // --- Draw Planets ---
              const earthX = centerX + scaledRadiusEarth * Math.cos(currentEarthAngle);
              const earthY = centerY + scaledRadiusEarth * Math.sin(currentEarthAngle);
              drawCircle(earthX, earthY, Math.max(3, width * 0.015), 'blue'); // Earth
 
              const marsX = centerX + scaledRadiusMars * Math.cos(currentMarsAngle);
              const marsY = centerY + scaledRadiusMars * Math.sin(currentMarsAngle);
-             drawCircle(marsX, marsY, Math.max(2.5, width * 0.012), 'red');   // Mars
+             drawCircle(marsX, marsY, Math.max(2.5, width * 0.012), 'red'); // Mars
 
-             // --- Draw Spacecraft ---
-             // Only draw if launched (time > 0)
              if (currentTime > 0) {
                  drawCircle(spacecraftX, spacecraftY, Math.max(2, width * 0.008), 'lime'); // Spacecraft
              }
 
-             // Update status text based on simulation state
-             if (!simulationRunning && currentTime === 0) {
-                 statusElement.textContent = "Ready to launch.";
+             if (statusElement) {
+                 if (!simulationRunning && currentTime === 0) {
+                     statusElement.textContent = "Ready to launch.";
+                 }
              }
         }
 
-
-        // --- Animation Loop ---
         function animate() {
             if (!simulationRunning) return;
 
-            // Redraw static background (orbits, sun, transfer path)
             drawStaticElements();
-
-            // Calculate and draw moving elements (planets, spacecraft) at current time
-            // This function now also adds point to trail and draws the trail
             drawMovingElements(time);
 
-            // Check for arrival
             if (time >= travelTimeSeconds) {
-                 simulationRunning = false; // Stop simulation
-                 statusElement.textContent = `Arrived at Mars orbit in ~${(time / (3600*24)).toFixed(1)} days!`;
-                 startButton.disabled = false;
-                 startButton.textContent = "Restart Simulation";
-                 // Keep drawing final frame until restart
+                 simulationRunning = false;
+                 if (statusElement) statusElement.textContent = `Arrived at Mars orbit in ~${(time / (3600*24)).toFixed(1)} days!`;
+                 if (startButton) {
+                     startButton.disabled = false;
+                     startButton.textContent = "Restart Simulation";
+                 }
                  cancelAnimationFrame(animationFrameId);
-                 animationFrameId = null; // Clear animation frame id
-                 // Ensure final state with trail is drawn
+                 animationFrameId = null;
                  drawStaticElements();
-                 drawMovingElements(time); // Draw final positions
+                 drawMovingElements(time);
             } else {
-                 // Update time for next frame
                  time += timeStep;
-                 // Request next frame
                  animationFrameId = requestAnimationFrame(animate);
             }
         }
 
         // --- Event Listeners ---
-        startButton.addEventListener('click', () => {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
-            }
-            // --- Reset simulation state ---
-            time = 0;
-            earthAngle = Math.PI; // Reset Earth start position
-            spacecraftTrail = []; // Clear the trail array
-            resizeCanvas(); // Recalculate sizes and redraw static elements
-            spacecraftAngle = earthAngle;
-            spacecraftRadius = scaledRadiusEarth; // Reset spacecraft position to Earth orbit
+        if (startButton) {
+            startButton.addEventListener('click', () => {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+                time = 0;
+                earthAngle = Math.PI;
+                spacecraftTrail = [];
+                resizeCanvas(); // Recalculate sizes first
+                // Ensure radii/angles are valid after resize before setting start pos
+                if (!isFinite(scaledRadiusEarth) || !isFinite(earthAngle)) return; // Safety check
+                spacecraftAngle = earthAngle;
+                spacecraftRadius = scaledRadiusEarth;
 
-            simulationRunning = true;
-            startButton.disabled = true;
-            startButton.textContent = "Simulation Running...";
-            statusElement.textContent = "Launch initiated...";
-            // Add the very first point of the trail (Earth's position at launch)
-            const startX = centerX + scaledRadiusEarth * Math.cos(earthAngle);
-            const startY = centerY + scaledRadiusEarth * Math.sin(earthAngle);
-            spacecraftTrail.push({ x: startX, y: startY });
-            animate(); // Start the animation loop
-        });
+                simulationRunning = true;
+                startButton.disabled = true;
+                startButton.textContent = "Simulation Running...";
+                if (statusElement) statusElement.textContent = "Launch initiated...";
 
-        window.addEventListener('resize', () => {
-             resizeCanvas(); // Recalculate sizes and redraw static elements
-             // If simulation is running or paused/finished, redraw moving elements and trail
-             drawMovingElements(time); // Redraw planets/spacecraft at current time
-             // Trail is drawn inside drawMovingElements now
+                const startX = centerX + scaledRadiusEarth * Math.cos(earthAngle);
+                const startY = centerY + scaledRadiusEarth * Math.sin(earthAngle);
+                 if (isFinite(startX) && isFinite(startY)) {
+                     spacecraftTrail.push({ x: startX, y: startY });
+                 }
+                animate();
+            });
+        }
+
+        // Use ResizeObserver
+        const resizeObserver = new ResizeObserver(entries => {
+            resizeCanvas();
         });
+        if (canvasWrapper) {
+            resizeObserver.observe(canvasWrapper);
+        }
+
 
         // --- Initial Setup ---
-        resizeCanvas(); // Initial draw and size calculation
+        if (canvasWrapper) {
+             // Delay initial resize slightly more to ensure layout is stable
+             setTimeout(resizeCanvas, 50);
+        } else {
+            console.error("Canvas wrapper not found for initial resize.");
+        }
 
     </script>
-
-    
 </body>
 </html>
