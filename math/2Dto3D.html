@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Shapes to 3D Objects Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+            }
+        }
+    </script>
+    <style>
+        /* Basic font setup */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        /* Style for the canvas containers */
+        .canvas-container {
+            width: 100%;
+            height: 350px; /* Fixed height for canvas */
+            background-color: #ffffff; /* Keep canvas background white */
+            border-radius: 0.5rem; /* Rounded corners */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Subtle shadow */
+            margin-bottom: 1rem; /* Space below canvas */
+            position: relative; /* Needed for absolute positioning of labels */
+            overflow: hidden; /* Ensure content stays within bounds */
+        }
+        /* Style for labels inside canvas */
+        .shape-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            pointer-events: none; /* Don't interfere with mouse controls */
+        }
+        /* Custom animation class */
+        @keyframes progress-bar {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        .progress-bar-inner {
+            animation: progress-bar 5s linear infinite; /* 5 second loop */
+            height: 100%;
+            background-color: #3b82f6; /* Blue-500 */
+            border-radius: 0.25rem;
+        }
+        .progress-bar-outer {
+            height: 8px;
+            border-radius: 0.25rem;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+
+    <h1 class="text-2xl md:text-3xl font-bold text-center mb-8 text-slate-700 dark:text-slate-300">Visualizing 3D Object Creation</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-3 text-center text-slate-600 dark:text-slate-300">1. Square to Cube (Extrusion)</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-3 text-center">A 2D square is extended upwards along the Y-axis to form a 3D cube.</p>
+            <div id="cube-container" class="canvas-container">
+                <div class="shape-label">Square ➔ Cube</div>
+            </div>
+            <div class="progress-bar-outer bg-gray-200 dark:bg-gray-700"><div class="progress-bar-inner"></div></div>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-2 text-center">Animation showing extrusion height increasing.</p>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mt-3">
+                <strong>Process:</strong> Extrusion involves taking a 2D shape and extending it along a path perpendicular to its surface, creating depth or height.
+            </p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-3 text-center text-slate-600 dark:text-slate-300">2. Circle to Sphere (Revolution)</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-3 text-center">A 2D semi-circle is rotated around an axis to form a 3D sphere.</p>
+            <div id="sphere-container" class="canvas-container">
+                <div class="shape-label">Circle ➔ Sphere</div>
+            </div>
+             <div class="progress-bar-outer bg-gray-200 dark:bg-gray-700"><div class="progress-bar-inner"></div></div>
+             <p class="text-xs text-slate-400 dark:text-slate-500 mt-2 text-center">Animation showing angle of revolution increasing.</p>
+             <p class="text-sm text-slate-600 dark:text-slate-400 mt-3">
+                 <strong>Process:</strong> Revolution (or spinning) creates a 3D shape by rotating a 2D profile (like a line or curve) around a central axis.
+             </p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-3 text-center text-slate-600 dark:text-slate-300">3. Rings to Hollow Cylinder (Extrusion)</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-3 text-center">A 2D ring is extruded along its axis to form a hollow cylinder (shown inclined).</p>
+            <div id="cylinder-container" class="canvas-container">
+                 <div class="shape-label">Ring ➔ Hollow Cylinder</div>
+            </div>
+             <div class="progress-bar-outer bg-gray-200 dark:bg-gray-700"><div class="progress-bar-inner"></div></div>
+             <p class="text-xs text-slate-400 dark:text-slate-500 mt-2 text-center">Animation showing extrusion height increasing.</p>
+             <p class="text-sm text-slate-600 dark:text-slate-400 mt-3">
+                 <strong>Process:</strong> Similar to the cube, this uses extrusion, but applies it to a 2D shape with a hole (a ring) to create a hollow 3D object.
+             </p>
+        </div>
+
+    </div>
+
+    <p class="text-center text-sm text-slate-500 dark:text-slate-400 mt-8">Hint: Click and drag within each view to rotate the object.</p>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- Configuration ---
+        const ANIMATION_DURATION = 5000; // 5 seconds for one cycle
+        const SOLID_COLOR = 0x60a5fa; // Lighter Blue
+        const WIREFRAME_COLOR = 0xff0000; // Red for wireframes
+
+        // --- Helper Function to create Scene, Camera, Renderer, Controls ---
+        function setupScene(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.error(`Container with id ${containerId} not found.`);
+                return null;
+            }
+
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff); // White background
+
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 5;
+            camera.position.y = 2;
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 7.5);
+            scene.add(directionalLight);
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.screenSpacePanning = false;
+            controls.minDistance = 2;
+            controls.maxDistance = 20;
+
+            const resizeObserver = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    const { width, height } = entry.contentRect;
+                    if (width === 0 || height === 0) continue;
+                    camera.aspect = width / height;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(width, height);
+                }
+            });
+            resizeObserver.observe(container);
+
+            return { scene, camera, renderer, controls, container };
+        }
+
+        // --- Material Definitions ---
+        const solidMaterial = new THREE.MeshStandardMaterial({
+            color: SOLID_COLOR,
+            metalness: 0.3,
+            roughness: 0.6,
+            side: THREE.DoubleSide,
+            transparent: true, // Enable transparency
+            opacity: 0.7 // Set opacity level
+        });
+        const redWireframeMaterial = new THREE.LineBasicMaterial({
+             color: WIREFRAME_COLOR,
+             linewidth: 1.5 // Slightly thicker line
+        });
+
+
+        // --- 1. Cube Simulation (Extrude Upwards) ---
+        function setupCubeSimulation() {
+            const setup = setupScene('cube-container');
+            if (!setup) return;
+            const { scene, camera, renderer, controls } = setup;
+            camera.position.z = 4;
+            camera.position.y = 3;
+            camera.lookAt(0, 1, 0);
+
+            const squareSize = 2;
+            const maxHeight = 2;
+            let currentHeight = 0.01;
+            let cubeMesh;
+            let edgesMesh;
+
+            function updateCubeGeometry() {
+                if (cubeMesh) scene.remove(cubeMesh);
+
+                const cubeGeometry = new THREE.BoxGeometry(squareSize, currentHeight, squareSize);
+                cubeMesh = new THREE.Mesh(cubeGeometry, solidMaterial);
+                scene.add(cubeMesh);
+
+                const edgesGeometry = new THREE.EdgesGeometry(cubeGeometry);
+                edgesMesh = new THREE.LineSegments(edgesGeometry, redWireframeMaterial);
+                cubeMesh.add(edgesMesh);
+            }
+
+            updateCubeGeometry();
+
+            const clock = new THREE.Clock();
+
+            function animateCube() {
+                requestAnimationFrame(animateCube);
+
+                const elapsedTime = clock.getElapsedTime() * 1000;
+                const progress = (elapsedTime % ANIMATION_DURATION) / ANIMATION_DURATION;
+                const newHeight = 0.01 + progress * (maxHeight - 0.01);
+
+                if (Math.abs(currentHeight - newHeight) > 0.01) {
+                     currentHeight = newHeight;
+                     if (cubeMesh) {
+                         cubeMesh.geometry.dispose();
+                         if (edgesMesh) edgesMesh.geometry.dispose();
+                     }
+                     updateCubeGeometry();
+                }
+
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animateCube();
+        }
+
+        // --- 2. Sphere Simulation ---
+        function setupSphereSimulation() {
+            const setup = setupScene('sphere-container');
+             if (!setup) return;
+            const { scene, camera, renderer, controls } = setup;
+
+            const radius = 1.5;
+            const segments = 32;
+            let currentAngle = 0.01;
+            let sphereMesh;
+            let latheWireframe;
+            let edgesMesh;
+
+            const points = [];
+            for (let i = 0; i <= segments / 2; i++) {
+                const angle = (i / (segments / 2)) * Math.PI;
+                points.push(new THREE.Vector2(Math.sin(angle) * radius, Math.cos(angle) * radius));
+            }
+            const latheProfileGeometry = new THREE.BufferGeometry().setFromPoints(points);
+            latheWireframe = new THREE.Line(latheProfileGeometry, redWireframeMaterial);
+            latheWireframe.rotation.x = Math.PI / 2;
+            scene.add(latheWireframe);
+
+
+            function updateSphereGeometry() {
+                if (sphereMesh) scene.remove(sphereMesh);
+
+                const sphereGeometry = new THREE.LatheGeometry(points, segments, 0, currentAngle);
+                sphereMesh = new THREE.Mesh(sphereGeometry, solidMaterial);
+                scene.add(sphereMesh);
+
+                const edgesGeometry = new THREE.EdgesGeometry(sphereGeometry, 15);
+                edgesMesh = new THREE.LineSegments(edgesGeometry, redWireframeMaterial);
+                sphereMesh.add(edgesMesh);
+            }
+
+            updateSphereGeometry();
+
+            const clock = new THREE.Clock();
+
+            function animateSphere() {
+                requestAnimationFrame(animateSphere);
+
+                const elapsedTime = clock.getElapsedTime() * 1000;
+                const progress = (elapsedTime % ANIMATION_DURATION) / ANIMATION_DURATION;
+                const newAngle = 0.01 + progress * (Math.PI * 2 - 0.01);
+
+                if (Math.abs(currentAngle - newAngle) > 0.01) {
+                    currentAngle = newAngle;
+                     if (sphereMesh) {
+                         sphereMesh.geometry.dispose();
+                         if (edgesMesh) edgesMesh.geometry.dispose();
+                     }
+                    updateSphereGeometry();
+                }
+
+                latheWireframe.rotation.z = currentAngle;
+
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animateSphere();
+        }
+
+
+        // --- 3. Hollow Cylinder Simulation (Inclined & Fixed Wireframe) ---
+        function setupCylinderSimulation() {
+            const setup = setupScene('cylinder-container');
+             if (!setup) return;
+            const { scene, camera, renderer, controls } = setup;
+            camera.position.z = 6;
+            camera.position.y = 3;
+            camera.lookAt(0, 0, 0);
+
+            const outerRadius = 1.5;
+            const innerRadius = 1.0;
+            const height = 2.5;
+            let currentHeight = 0.01;
+            let cylinderMesh;
+            let edgesMesh;
+
+            const ringShape = new THREE.Shape();
+            ringShape.absarc(0, 0, outerRadius, 0, Math.PI * 2, false);
+            const holePath = new THREE.Path();
+            holePath.absarc(0, 0, innerRadius, 0, Math.PI * 2, true);
+            ringShape.holes.push(holePath);
+
+            const extrudeSettings = {
+                steps: 1,
+                depth: currentHeight,
+                bevelEnabled: false
+            };
+
+            const inclineAngleX = Math.PI / 5;
+
+            function updateCylinderGeometry() {
+                if (cylinderMesh) scene.remove(cylinderMesh);
+
+                extrudeSettings.depth = currentHeight;
+                const cylinderGeometry = new THREE.ExtrudeGeometry(ringShape, extrudeSettings);
+                cylinderGeometry.center();
+
+                cylinderMesh = new THREE.Mesh(cylinderGeometry, solidMaterial);
+                cylinderMesh.rotation.x = inclineAngleX;
+                scene.add(cylinderMesh);
+
+                const edgesGeometry = new THREE.EdgesGeometry(cylinderGeometry);
+                edgesMesh = new THREE.LineSegments(edgesGeometry, redWireframeMaterial);
+                cylinderMesh.add(edgesMesh);
+            }
+
+            updateCylinderGeometry();
+
+            const clock = new THREE.Clock();
+
+            function animateCylinder() {
+                requestAnimationFrame(animateCylinder);
+
+                const elapsedTime = clock.getElapsedTime() * 1000;
+                const progress = (elapsedTime % ANIMATION_DURATION) / ANIMATION_DURATION;
+                const newHeight = 0.01 + progress * (height - 0.01);
+
+                if (Math.abs(currentHeight - newHeight) > 0.01) {
+                    currentHeight = newHeight;
+                     if (cylinderMesh) {
+                         cylinderMesh.geometry.dispose();
+                         if (edgesMesh) edgesMesh.geometry.dispose();
+                     }
+                    updateCylinderGeometry();
+                }
+
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animateCylinder();
+        }
+
+        // --- Initialize Simulations ---
+        window.onload = () => {
+            setTimeout(() => { // Delay ensures layout stability
+                try {
+                    setupCubeSimulation();
+                    setupSphereSimulation();
+                    setupCylinderSimulation();
+                } catch (error) {
+                    console.error("Error initializing Three.js simulations:", error);
+                    document.body.prepend(document.createTextNode("Error loading visualizations. Please check the console."));
+                }
+            }, 100);
+        };
+
+    </script>
+    <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+        &copy; <span id="copyright-year"></span> NakedCircuits All rights reserved.
+    </p>
+</body>
+</html>
